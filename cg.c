@@ -200,7 +200,30 @@ Node *node_div(Node *n1, Node *n2, char *name)
     return n;
 }
 
-void optimize(Node *root)
+float node_eval(Node *target, FeedDict *feed, size_t len)
 {
+    if (target->type == CONST || target->type == VAR) {
+        return target->val;
+    }
 
+    switch (target->expr.type) {
+        case ADD:
+            return node_eval(target->expr.args[0], feed, len) + node_eval(target->expr.args[1], feed, len);
+        case SUB:
+            return node_eval(target->expr.args[0], feed, len) - node_eval(target->expr.args[1], feed, len);
+        case MUL:
+            return node_eval(target->expr.args[0], feed, len) * node_eval(target->expr.args[1], feed, len);
+        case DIV:
+            return node_eval(target->expr.args[0], feed, len) / node_eval(target->expr.args[1], feed, len);
+        case NONE:
+            for (int i = 0; i < len; i++) {
+                if (!strcmp(target->name, feed[i].key)) {
+                    return feed[i].val;
+                }
+            }
+
+        default:
+            printf("Unknown expression type\n");
+            exit(1);
+    }
 }

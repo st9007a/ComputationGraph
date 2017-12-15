@@ -16,6 +16,7 @@ enum node_func_type {
 };
 
 typedef struct __CG_NODE Node;
+typedef struct __FEED_DICT FeedDict;
 
 struct __CG_NODE {
 	enum node_type type;
@@ -29,6 +30,11 @@ struct __CG_NODE {
 	Node *ref;
 };
 
+struct __FEED_DICT {
+	char key[128];
+	float val;
+};
+
 void node_info(Node *n);
 
 Node *create_variable(char *name);
@@ -40,6 +46,7 @@ Node *node_mul(Node *n1, Node *n2, char *name);
 Node *node_div(Node *n1, Node *n2, char *name);
 Node *node_sub(Node *n1, Node *n2, char *name);
 
-void optimize(Node *root);
+float node_eval(Node *target, FeedDict *feed, size_t len);
+void optimize(Node *target, FeedDict *feed);
 
 #endif
