@@ -5,14 +5,14 @@ OUT = build
 EXEC = test
 
 .PHONY: all clean run
-all: $(EXEC)
+all: $(OUT)/$(EXEC)
 
-run: $(EXEC)
+run: $(OUT)/$(EXEC)
 	@./$(OUT)/$(EXEC)
 
-$(EXEC): cg.c test.c
+$(OUT)/$(EXEC): cg.c test.c
 	mkdir -p $(OUT)
-	$(CC) -o $(OUT)/$@ $^ $(CFLAGS)
+	$(CC) -o $@ $^ $(CFLAGS)
 
 clean:
 	$(RM) $(OUT)
