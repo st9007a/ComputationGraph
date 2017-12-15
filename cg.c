@@ -133,21 +133,21 @@ Node *node_sub(Node *n1, Node *n2, char *name)
     Node *n = malloc(sizeof(Node));
 
     strcpy(n->name, name);
+    n->ref = NULL;
+    n1->ref = n;
+    n2->ref = n;
 
     if (n1->type == CONST && n2->type == CONST) {
         n->type = CONST;
         n->val = n1->val - n2->val;
-    } else {
-        n->type = PLACEHOLDER;
+        n->expr.type = NONE;
+        return n;
     }
 
+    n->type = PLACEHOLDER;
     n->expr.type = SUB;
     n->expr.args[0] = n1;
     n->expr.args[1] = n2;
-    n->ref = NULL;
-
-    n1->ref = n;
-    n2->ref = n;
 
     return n;
 }
@@ -157,21 +157,21 @@ Node *node_mul(Node *n1, Node *n2, char *name)
     Node *n = malloc(sizeof(Node));
 
     strcpy(n->name, name);
+    n->ref = NULL;
+    n1->ref = n;
+    n2->ref = n;
 
     if (n1->type == CONST && n2->type == CONST) {
         n->type = CONST;
         n->val = n1->val * n2->val;
-    } else {
-        n->type = PLACEHOLDER;
+        n->expr.type = NONE;
+        return n;
     }
 
+    n->type = PLACEHOLDER;
     n->expr.type = MUL;
     n->expr.args[0] = n1;
     n->expr.args[1] = n2;
-    n->ref = NULL;
-
-    n1->ref = n;
-    n2->ref = n;
 
     return n;
 }
@@ -181,21 +181,45 @@ Node *node_div(Node *n1, Node *n2, char *name)
     Node *n = malloc(sizeof(Node));
 
     strcpy(n->name, name);
+    n->ref = NULL;
+    n1->ref = n;
+    n2->ref = n;
 
     if (n1->type == CONST && n2->type == CONST) {
         n->type = CONST;
         n->val = n1->val / n2->val;
-    } else {
-        n->type = PLACEHOLDER;
+        n->expr.type = NONE;
+        return n;
     }
 
+    n->type = PLACEHOLDER;
     n->expr.type = DIV;
     n->expr.args[0] = n1;
     n->expr.args[1] = n2;
-    n->ref = NULL;
 
+    return n;
+}
+
+Node *node_mse(Node *n1, Node *n2, char *name)
+{
+    Node *n = malloc(sizeof(Node));
+
+    strcpy(n->name, name);
+    n->ref = NULL;
     n1->ref = n;
     n2->ref = n;
+
+    if (n1->type == CONST && n2->type == CONST) {
+        n->type = CONST;
+        n->val = sqrt(pow(n1->val - n2->val, 2));
+        n->expr.type = NONE;
+        return n;
+    }
+
+    n->type = PLACEHOLDER;
+    n->expr.type = MSE;
+    n->expr.args[0] = n1;
+    n->expr.args[1] = n2;
 
     return n;
 }
@@ -215,6 +239,8 @@ float node_eval(Node *target, FeedDict *feed, size_t len)
             return node_eval(target->expr.args[0], feed, len) * node_eval(target->expr.args[1], feed, len);
         case DIV:
             return node_eval(target->expr.args[0], feed, len) / node_eval(target->expr.args[1], feed, len);
+        case MSE:
+            return sqrt(pow(node_eval(target->expr.args[0], feed, len) - node_eval(target->expr.args[1], feed, len), 2));
         case NONE:
             for (int i = 0; i < len; i++) {
                 if (!strcmp(target->name, feed[i].key)) {
