@@ -1,15 +1,19 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
-#define MATRIX_INIT(m, dim, num_dims)        \
-	do {                                     \
-		uint32_t len = 1;                    \
-		for (int i = 0; i < num_dims; i++) { \
-			m.dim[i] = dim[i];               \
-			len *= dim[i];                   \
-		}                                    \
-		m.num_dims = num_dims;               \
-		m.len = len;                         \
+#define MATRIX_INIT(m, dim, num_dims)          \
+	do {                                       \
+		uint32_t len = 1;                      \
+		for (int i = 0; i < num_dims; i++) {   \
+			m.dim[i] = dim[i];                 \
+			len *= dim[i];                     \
+		}                                      \
+		m.num_dims = num_dims;                 \
+		m.len = len;                           \
+		m.val = malloc(sizeof(float) * len);   \
+		if (m.val == NULL) {                   \
+			FATAL(MEMORY_EXHAUSTED_ERROR"\n"); \
+		}                                      \
 	} while(0);
 
 typedef struct __MATRIX Matrix;

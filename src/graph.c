@@ -53,7 +53,8 @@ void node_info(Node *n)
             printf("Unknown type\n");
     }
 
-    printf("Dimension: ");
+    printf("Dimension: %d D\n", n->data.num_dims);
+    printf("Dimension Lenght: ");
     for (int i = 0; i < n->data.num_dims; i++) {
         printf("%f ", n->data.dim[i]);
     }
@@ -129,20 +130,22 @@ Node *node_placeholder(uint32_t *dim, uint32_t num_dims, char *name)
     return n;
 }
 
-Node *node_add(Node *n1, Node *n2, char *name)
+Node *scalar_add(Node *n1, Node *n2, char *name)
 {
-    Node *n = malloc(sizeof(Node));
-
-    strcpy(n->name, name);
-
-    if (n1->type == CONST && n2->type == CONST) {
-        n->type = CONST;
-        n->val = n1->val + n2->val;
-    } else {
-        n->type = PLACEHOLDER;
+    if (n2->data.num_dims != 0) {
+        FATAL(UNEXPECTED_SHAPE_ERROR": scalar calculation require a 0-D Node\n");
     }
 
-    n->expr.type = ADD;
+    Node *n = node_placeholder(n1->dim, n1->num_dims, name);
+
+    if (n1->type == DL_CONST && n2->type == DL_CONST) {
+        n->type = DL_CONST;
+        for (int i = 0; i < n1->data.len; i++) {
+            n->data.val[i] = n1->data.val[i] + n2->data.val[0];
+        }
+    }
+
+    n->expr.type = DL_SCALAR_ADD;
     n->expr.args[0] = n1;
     n->expr.args[1] = n2;
     n->ref = NULL;
@@ -153,74 +156,80 @@ Node *node_add(Node *n1, Node *n2, char *name)
     return n;
 }
 
-Node *node_sub(Node *n1, Node *n2, char *name)
+Node *scalar_sub(Node *n1, Node *n2, char *name)
 {
-    Node *n = malloc(sizeof(Node));
-
-    strcpy(n->name, name);
-    n->ref = NULL;
-    n1->ref = n;
-    n2->ref = n;
-
-    if (n1->type == CONST && n2->type == CONST) {
-        n->type = CONST;
-        n->val = n1->val - n2->val;
-        n->expr.type = NONE;
-        return n;
+    if (n2->data.num_dims != 0) {
+        FATAL(UNEXPECTED_SHAPE_ERROR": scalar calculation require a 0-D Node\n");
     }
 
-    n->type = PLACEHOLDER;
-    n->expr.type = SUB;
+    Node *n = node_placeholder(n1->dim, n1->num_dims, name);
+
+    if (n1->type == DL_CONST && n2->type == DL_CONST) {
+        n->type = DL_CONST;
+        for (int i = 0; i < n1->data.len; i++) {
+            n->data.val[i] = n1->data.val[i] - n2->data.val[0];
+        }
+    }
+
+    n->expr.type = DL_SCALAR_SUB;
     n->expr.args[0] = n1;
     n->expr.args[1] = n2;
+    n->ref = NULL;
+
+    n1->ref = n;
+    n2->ref = n;
 
     return n;
 }
 
-Node *node_mul(Node *n1, Node *n2, char *name)
+Node *scalar_mul(Node *n1, Node *n2, char *name)
 {
-    Node *n = malloc(sizeof(Node));
-
-    strcpy(n->name, name);
-    n->ref = NULL;
-    n1->ref = n;
-    n2->ref = n;
-
-    if (n1->type == CONST && n2->type == CONST) {
-        n->type = CONST;
-        n->val = n1->val * n2->val;
-        n->expr.type = NONE;
-        return n;
+    if (n2->data.num_dims != 0) {
+        FATAL(UNEXPECTED_SHAPE_ERROR": scalar calculation require a 0-D Node\n");
     }
 
-    n->type = PLACEHOLDER;
-    n->expr.type = MUL;
+    Node *n = node_placeholder(n1->dim, n1->num_dims, name);
+
+    if (n1->type == DL_CONST && n2->type == DL_CONST) {
+        n->type = DL_CONST;
+        for (int i = 0; i < n1->data.len; i++) {
+            n->data.val[i] = n1->data.val[i] * n2->data.val[0];
+        }
+    }
+
+    n->expr.type = DL_SCALAR_MUL;
     n->expr.args[0] = n1;
     n->expr.args[1] = n2;
+    n->ref = NULL;
+
+    n1->ref = n;
+    n2->ref = n;
 
     return n;
 }
 
-Node *node_div(Node *n1, Node *n2, char *name)
+Node *scalar_div(Node *n1, Node *n2, char *name)
 {
-    Node *n = malloc(sizeof(Node));
-
-    strcpy(n->name, name);
-    n->ref = NULL;
-    n1->ref = n;
-    n2->ref = n;
-
-    if (n1->type == CONST && n2->type == CONST) {
-        n->type = CONST;
-        n->val = n1->val / n2->val;
-        n->expr.type = NONE;
-        return n;
+    if (n2->data.num_dims != 0) {
+        FATAL(UNEXPECTED_SHAPE_ERROR": scalar calculation require a 0-D Node\n");
     }
 
-    n->type = PLACEHOLDER;
-    n->expr.type = DIV;
+    Node *n = node_placeholder(n1->dim, n1->num_dims, name);
+
+    if (n1->type == DL_CONST && n2->type == DL_CONST) {
+        n->type = DL_CONST;
+        for (int i = 0; i < n1->data.len; i++) {
+            n->data.val[i] = n1->data.val[i] / n2->data.val[0];
+        }
+    }
+
+    n->expr.type = DL_SCALAR_DIV;
     n->expr.args[0] = n1;
     n->expr.args[1] = n2;
+    n->ref = NULL;
+
+    n1->ref = n;
+    n2->ref = n;
 
     return n;
 }
