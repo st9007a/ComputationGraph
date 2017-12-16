@@ -308,10 +308,33 @@ static float differential(Node *y, Node *x)
     return (up - low) / (2 * esp);
 }
 
-void node_optimize_init(Node *target, FeedDict *feed, size_t len) {
-    node_eval(target, feed, len);
-}
-
-void node_optimize(Node *target)
+void node_optimize(Node *target, float lr, FeedDict *feed, size_t len)
 {
+    Node *queue[32];
+    Node *ptr;
+    int head = 0;
+    int tail = 0;
+
+    node_eval(target, feed, len);
+
+    target->grad = 1;
+    queue[tail++] = target;
+
+    while (head != tail) {
+        ptr = queue[head];
+        head = (head + 1) % 32;
+        if (ptr->expr.type == NONE) {
+            ptr->val = ptr->val - ptr->grad * lr;
+            continue;
+        }
+
+        for (int i = 0; i < 2; i++) {
+            if (ptr->expr.args[i] != NULL) {
+                ptr->expr.args[i]->grad = ptr->grad * differential(ptr, ptr->expr.args[i]);
+                queue[tail] = ptr->expr.args[i];
+                tail = (tail + 1) % 32;
+            }
+        }
+    }
+
 }

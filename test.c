@@ -20,11 +20,25 @@ int main()
     node_info(W);
     node_info(b);
 
+    printf("Before optimize:\n");
     float ans = node_eval(Wx_plus_b, feed, 1);
     printf("ans: %f\n", ans);
 
     Node *mse = node_mse(Wx_plus_b, y, "mse_loss");
     float loss = node_eval(mse, feed, 2);
+    printf("loss: %f\n", loss);
+
+    int i = 0;
+    while(loss > 0.001) {
+        i++;
+        node_optimize(mse, 0.001, feed, 2);
+        loss = node_eval(mse, feed, 2);
+        /* printf("step: %d, loss: %f\n", i, loss); */
+    }
+
+    printf("\nAfter optimize:\n");
+    ans = node_eval(Wx_plus_b, feed, 1);
+    printf("ans: %f\n", ans);
     printf("loss: %f\n", loss);
 
     free(W);
