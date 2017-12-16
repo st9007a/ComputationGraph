@@ -9,4 +9,4 @@ $(SUBDIRS):
 	@$(MAKE) -C $@ $(MAKECMDGOALS)
 
 check:
-	@$(MAKE) -C test check
+	@$(MAKE) -C tests check
