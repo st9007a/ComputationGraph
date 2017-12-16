@@ -1,10 +1,29 @@
 #include <assert.h>
 #include <math.h>
+#include <memory.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "cg.h"
+#include "base.h"
+#include "matrix.h"
+#include "graph.h"
+
+#define NODE_INIT(n, dim, num_dims, type)      \
+    do {                                       \
+        n = malloc(sizeof(Node));              \
+        if (n == NULL) {                       \
+            FATAL(MEMORY_EXHAUSTED_ERROR"\n"); \
+        }                                      \
+        strcpy(n->name, name);                 \
+        MATRIX_INIT(n->data, dim, num_dims);   \
+        MATRIX_INIT(n->grad, dim, num_dims);   \
+        n->type = type;                        \
+        n->expr.type = DL_FUNC_NONE;           \
+        n->expr.args[0] = NULL;                \
+        n->expr.args[1] = NULL;                \
+        n->ref = NULL;                         \
+    } while(0);
 
 static inline float box_muller_sampling()
 {
@@ -21,39 +40,51 @@ void node_info(Node *n)
     printf("---------------------\n");
     printf("Type: ");
     switch (n->type) {
-        case CONST:
+        case DL_CONST:
             printf("Constant\n");
             break;
-        case VAR:
+        case DL_VAR:
             printf("Variable\n");
             break;
-        case PLACEHOLDER:
+        case DL_PLACEHOLDER:
             printf("Placeholder\n");
             break;
         default:
             printf("Unknown type\n");
     }
 
-    printf("Value: %f\n", n->val);
+    printf("Dimension: ");
+    for (int i = 0; i < n->data.num_dims; i++) {
+        printf("%f ", n->data.dim[i]);
+    }
+    printf("\n");
+
+    printf("Value: ");
+    for (int i = 0; i < n->data.len; i++) {
+        printf("%f ", n->data.val[i]);
+    }
+    printf("\n");
 
     printf("Expression Type: ");
-    if (n->expr.type == NONE) {
+    if (n->expr.type == DL_FUNC_NONE) {
         printf("None\n");
     }
     else {
         switch (n->expr.type) {
-            case ADD:
+            case DL_SCALAR_ADD:
                 printf("Add\n");
                 break;
-            case SUB:
+            case DL_SCALAR_SUB:
                 printf("Sub\n");
                 break;
-            case MUL:
+            case DL_SCALAR_MUL:
                 printf("Mul\n");
                 break;
-            case DIV:
+            case DL_SCALAR_DIV:
                 printf("Div\n");
                 break;
+            case DL_COST_MSE:
+                printf("Mean Square Error\n");
             default:
                 printf("Unknown\n");
         }
@@ -68,46 +99,32 @@ void node_info(Node *n)
     printf("---------------------\n");
 }
 
-Node *create_variable (char *name)
+Node *node_variable(uint32_t *dim, uint32_t num_dims, char *name)
 {
-    Node *n = malloc(sizeof(Node));
+    Node *n;
+    NODE_INIT(n, dim, num_dims, DL_VAR);
 
-    strcpy(n->name, name);
-    n->type = VAR;
-    n->val = box_muller_sampling();
-    n->expr.type = NONE;
-    n->expr.args[0] = NULL;
-    n->expr.args[1] = NULL;
-    n->ref = NULL;
+    for (int i = 0; i < n->data.len; i++) {
+        n->data.val[i] = box_muller_sampling();
+    }
 
     return n;
 }
 
-Node *create_constant(char *name, float val)
+Node *node_constant(float *data, uint32_t *dim, uint32_t num_dims, char *name)
 {
-    Node *n = malloc(sizeof(Node));
+    Node *n;
+    NODE_INIT(n, dim, num_dimsi, DL_CONST);
 
-    strcpy(n->name, name);
-    n->type = CONST;
-    n->val = val;
-    n->expr.type = NONE;
-    n->expr.args[0] = NULL;
-    n->expr.args[1] = NULL;
-    n->ref = NULL;
+    memcpy(n->data.val, data, sizeof(float) * n->data.len);
 
     return n;
 }
 
-Node *create_placeholder(char *name)
+Node *node_placeholder(uint32_t *dim, uint32_t num_dims, char *name)
 {
     Node *n = malloc(sizeof(Node));
-
-    strcpy(n->name, name);
-    n->type = PLACEHOLDER;
-    n->expr.type = NONE;
-    n->expr.args[0] = NULL;
-    n->expr.args[1] = NULL;
-    n->ref = NULL;
+    NODE_INIT(n, dim, num_dims, DL_PLACEHOLDER);
 
     return n;
 }
