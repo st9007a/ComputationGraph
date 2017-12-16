@@ -7,9 +7,8 @@ EXEC := \
 	   test_demo
 EXEC := $(addprefix $(OUT)/,$(EXEC))
 
-all: $(EXEC)
-
 .PHONY: all clean check
+all: $(EXEC)
 
 $(OUT):
 	mkdir -p $@
