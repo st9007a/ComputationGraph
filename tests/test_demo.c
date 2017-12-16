@@ -29,9 +29,9 @@ int main()
     printf("loss: %f\n", loss);
 
     int i = 0;
-    while(loss > 0.001) {
+    while(i < 100) {
         i++;
-        node_optimize(mse, 0.001, feed, 2);
+        node_optimize(mse, 0.01, feed, 2);
         loss = node_eval(mse, feed, 2);
         /* printf("step: %d, loss: %f\n", i, loss); */
     }
@@ -40,6 +40,10 @@ int main()
     ans = node_eval(Wx_plus_b, feed, 1);
     printf("ans: %f\n", ans);
     printf("loss: %f\n", loss);
+
+    float wval = node_eval(W, NULL, 0);
+    float bval = node_eval(b, NULL, 0);
+    printf("W: %f, b: %f\n", wval, bval);
 
     free(W);
     free(b);

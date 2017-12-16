@@ -1,18 +1,12 @@
-CFLAGS = -std=gnu99 -Wall -lm
-RM = rm -rf
+TOPTARGETS = all clean
+SUBDIRS = src tests
 
-OUT = build
-EXEC = test
+.PHONY: $(TOPTARGETS) $(SUBDIRS) check
+all: $(SUBDIRS)
 
-.PHONY: all clean run
-all: $(OUT)/$(EXEC)
+$(TOPTARGETS): $(SUBDIRS)
+$(SUBDIRS):
+	@$(MAKE) -C $@ $(MAKECMDGOALS)
 
-run: $(OUT)/$(EXEC)
-	@./$(OUT)/$(EXEC)
-
-$(OUT)/$(EXEC): cg.c test.c
-	mkdir -p $(OUT)
-	$(CC) -o $@ $^ $(CFLAGS)
-
-clean:
-	$(RM) $(OUT)
+check:
+	@$(MAKE) -C test check
