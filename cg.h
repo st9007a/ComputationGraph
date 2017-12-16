@@ -51,6 +51,7 @@ Node *node_sub(Node *n1, Node *n2, char *name);
 Node *node_mse(Node *n1, Node *n2, char *name);
 
 float node_eval(Node *target, FeedDict *feed, size_t len);
-void optimize(Node *target, FeedDict *feed);
+void node_optimize_init(Node *target, FeedDict *feed, size_t len);
+void node_optimize(Node *target);
 
 #endif

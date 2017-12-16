@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,6 +17,8 @@ static inline float box_muller_sampling()
 void node_info(Node *n)
 {
     printf("---------------------\n");
+    printf("Name: %s\n", n->name);
+    printf("---------------------\n");
     printf("Type: ");
     switch (n->type) {
         case CONST:
@@ -31,7 +34,6 @@ void node_info(Node *n)
             printf("Unknown type\n");
     }
 
-    printf("Name: %s\n", n->name);
     printf("Value: %f\n", n->val);
 
     printf("Expression Type: ");
@@ -74,6 +76,8 @@ Node *create_variable (char *name)
     n->type = VAR;
     n->val = box_muller_sampling();
     n->expr.type = NONE;
+    n->expr.args[0] = NULL;
+    n->expr.args[1] = NULL;
     n->ref = NULL;
 
     return n;
@@ -87,6 +91,8 @@ Node *create_constant(char *name, float val)
     n->type = CONST;
     n->val = val;
     n->expr.type = NONE;
+    n->expr.args[0] = NULL;
+    n->expr.args[1] = NULL;
     n->ref = NULL;
 
     return n;
@@ -99,6 +105,8 @@ Node *create_placeholder(char *name)
     strcpy(n->name, name);
     n->type = PLACEHOLDER;
     n->expr.type = NONE;
+    n->expr.args[0] = NULL;
+    n->expr.args[1] = NULL;
     n->ref = NULL;
 
     return n;
@@ -244,12 +252,66 @@ float node_eval(Node *target, FeedDict *feed, size_t len)
         case NONE:
             for (int i = 0; i < len; i++) {
                 if (!strcmp(target->name, feed[i].key)) {
+                    target->val = feed[i].val;
                     return feed[i].val;
                 }
             }
+            printf("Feed data not found\n");
+            exit(1);
 
         default:
             printf("Unknown expression type\n");
             exit(1);
     }
+}
+
+static float node_calc(Node *target)
+{
+    switch (target->expr.type) {
+        case NONE:
+            return target->val;
+        case ADD:
+            return target->expr.args[0]->val + target->expr.args[1]->val;
+        case SUB:
+            return target->expr.args[0]->val - target->expr.args[1]->val;
+        case MUL:
+            return target->expr.args[0]->val * target->expr.args[1]->val;
+        case DIV:
+            return target->expr.args[0]->val / target->expr.args[1]->val;
+
+        case MSE:
+            return sqrt(pow(target->expr.args[0]->val - target->expr.args[1]->val, 2));
+        default:
+            printf("Unknown expression type\n");
+            exit(1);
+    }
+}
+
+static float differential(Node *y, Node *x)
+{
+
+    assert(x == y->expr.args[0] || x == y->expr.args[1]);
+
+    const float esp = 0.0001;
+
+    float up, low;
+    float store_x = x->val;
+
+    x->val = store_x + esp;
+    up = node_calc(y);
+
+    x->val = store_x - esp;
+    low = node_calc(y);
+
+    x->val = store_x;
+
+    return (up - low) / (2 * esp);
+}
+
+void node_optimize_init(Node *target, FeedDict *feed, size_t len) {
+    node_eval(target, feed, len);
+}
+
+void node_optimize(Node *target)
+{
 }
