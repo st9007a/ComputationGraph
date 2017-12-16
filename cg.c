@@ -324,7 +324,9 @@ void node_optimize(Node *target, float lr, FeedDict *feed, size_t len)
         ptr = queue[head];
         head = (head + 1) % 32;
         if (ptr->expr.type == NONE) {
-            ptr->val = ptr->val - ptr->grad * lr;
+            if (ptr->type == VAR) {
+                ptr->val = ptr->val - ptr->grad * lr;
+            }
             continue;
         }
 
