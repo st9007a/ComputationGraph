@@ -1,6 +1,7 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
+#include <stddef.h>
 #include <stdint.h>
 
 #define MATRIX_INIT(m, dim, num_dims)          \

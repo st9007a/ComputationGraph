@@ -14,8 +14,8 @@ enum node_func_type {
 	DL_FUNC_NONE,
 
 	DL_SCALAR_ADD,
-	DL_SCALAR_MUL,
 	DL_SCALAR_SUB,
+	DL_SCALAR_MUL,
 	DL_SCALAR_DIV,
 
 	DL_COST_MSE,
@@ -39,8 +39,9 @@ struct __DL_NODE {
 };
 
 struct __DL_FEED_DICT {
+	size_t len;
 	char key[DL_NODE_NAME_LEN];
-	float val;
+	float *val;
 };
 
 void node_info(Node *n, int ignore_val);
@@ -56,7 +57,7 @@ Node *node_scalar_sub(Node *n1, Node *n2, char *name);
 
 // Node *cost_mse(Node *n1, Node *n2, char *name);
 //
-// float *node_eval(Node *target, FeedDict *feed, size_t len);
+Matrix *node_eval(Node *target, FeedDict *feed, size_t feed_size);
 // void node_optimize(Node *target, float lr, FeedDict *feed, size_t len);
 
 #endif

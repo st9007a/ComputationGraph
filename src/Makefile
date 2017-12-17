@@ -5,7 +5,8 @@ SOVERSION ?= 1
 REALVERSION ?= 1.0.0
 
 OBJS = \
-      graph.o \
+      node.o \
+	  eval.o \
 	  matrix.o
 
 OUT = ../$(LIB_PATH)
