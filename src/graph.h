@@ -57,8 +57,8 @@ Node *node_scalar_sub(Node *n1, Node *n2, char *name);
 
 extern const struct __DL_EVAL_FUNC_HOOK {
     int idx;
-    void (*eval_func)(Matrix *res, Matrix *m1, Matrix *m2);
-} eval_func[5];
+    void (*op_func)(Matrix *res, Matrix *m1, Matrix *m2, int diff);
+} eval_funcs[5];
 
 Matrix *node_eval(Node *target, FeedDict *feed, size_t feed_size);
 void node_optimize(Node *target, float lr, FeedDict *feed, size_t feed_size);

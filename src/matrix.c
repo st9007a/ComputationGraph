@@ -2,7 +2,13 @@
 #include <math.h>
 #include <memory.h>
 #include <stdlib.h>
+
 #include "matrix.h"
+
+// if diff = 0, it will execute dst = val
+// if diff = 1, it will execute dst = dst - val
+#define assign(dst, val, diff) \
+    dst = dst * diff - ((diff << 1) - 1) * (val);
 
 inline void matrix_init_random_norm(Matrix *m)
 {
@@ -30,38 +36,38 @@ inline void matrix_init_zeros(Matrix *m)
     memset(m->val, 0, sizeof(float) * m->len);
 }
 
-void matrix_scalar_add(Matrix *res, Matrix *m, float val)
+void matrix_scalar_add(Matrix *res, Matrix *m, float val, int diff)
 {
     assert(res->len == m->len && res->num_dims == m->num_dims);
 
     for (int i = 0; i < m->len; i++) {
-        res->val[i] = m->val[i] + val;
+        assign(res->val[i], m->val[i] + val, diff);
     }
 }
 
-void matrix_scalar_sub(Matrix *res, Matrix *m, float val)
+void matrix_scalar_sub(Matrix *res, Matrix *m, float val, int diff)
 {
     assert(res->len == m->len && res->num_dims == m->num_dims);
 
     for (int i = 0; i < m->len; i++) {
-        res->val[i] = m->val[i] - val;
+        assign(res->val[i], m->val[i] - val, diff);
     }
 }
 
-void matrix_scalar_mul(Matrix *res, Matrix *m, float val)
+void matrix_scalar_mul(Matrix *res, Matrix *m, float val, int diff)
 {
     assert(res->len == m->len && res->num_dims == m->num_dims);
 
     for (int i = 0; i < m->len; i++) {
-        res->val[i] = m->val[i] * val;
+        assign(res->val[i], m->val[i] * val, diff);
     }
 }
 
-void matrix_scalar_div(Matrix *res, Matrix *m, float val)
+void matrix_scalar_div(Matrix *res, Matrix *m, float val, int diff)
 {
     assert(res->len == m->len && res->num_dims == m->num_dims);
 
     for (int i = 0; i < m->len; i++) {
-        res->val[i] = m->val[i] / val;
+        assign(res->val[i], m->val[i] / val, diff);
     }
 }
