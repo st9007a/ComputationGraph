@@ -105,7 +105,7 @@ Node *node_variable(uint32_t *dim, uint32_t num_dims, char *name)
     Node *n;
     NODE_INIT(n, dim, num_dims, DL_VAR);
 
-    init_random_norm(&n->data);
+    matrix_init_random_norm(&n->data);
 
     return n;
 }
@@ -115,7 +115,7 @@ Node *node_constant(float *data, uint32_t *dim, uint32_t num_dims, char *name)
     Node *n;
     NODE_INIT(n, dim, num_dims, DL_CONST);
 
-    init_constant(&n->data, data, n->data.len);
+    matrix_init_constant(&n->data, data, n->data.len);
 
     return n;
 }

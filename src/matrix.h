@@ -27,9 +27,14 @@ struct __MATRIX {
 	uint32_t len;
 };
 
-void init_random_norm(Matrix *m);
-void init_constant(Matrix *m, float *data, size_t len);
-void init_ones(Matrix *m);
-void init_zeros(Matrix *m);
+void matrix_init_random_norm(Matrix *m);
+void matrix_init_constant(Matrix *m, float *data, size_t len);
+void matrix_init_ones(Matrix *m);
+void matrix_init_zeros(Matrix *m);
+
+void matrix_scalar_add(Matrix *res, Matrix *m, float val);
+void matrix_scalar_sub(Matrix *res, Matrix *m, float val);
+void matrix_scalar_mul(Matrix *res, Matrix *m, float val);
+void matrix_scalar_div(Matrix *res, Matrix *m, float val);
 
 #endif
