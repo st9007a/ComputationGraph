@@ -55,10 +55,12 @@ Node *node_scalar_mul(Node *n1, Node *n2, char *name);
 Node *node_scalar_div(Node *n1, Node *n2, char *name);
 Node *node_scalar_sub(Node *n1, Node *n2, char *name);
 
+Node *node_cost_mse(Node *logits, Node *target, char *name);
+
 extern const struct __DL_EVAL_FUNC_HOOK {
     int idx;
     void (*op_func)(Matrix *res, Matrix *m1, Matrix *m2, int diff);
-} eval_funcs[5];
+} eval_funcs[6];
 
 Matrix *node_eval(Node *target, FeedDict *feed, size_t feed_size);
 void node_optimize(Node *target, float lr, FeedDict *feed, size_t feed_size);

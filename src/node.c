@@ -131,7 +131,7 @@ Node *node_placeholder(uint32_t *dim, uint32_t num_dims, char *name)
 Node *node_scalar_add(Node *n1, Node *n2, char *name)
 {
     if (n2->data.num_dims != 0) {
-        FATAL(UNEXPECTED_SHAPE_ERROR": scalar calculation require a 0-D Node\n");
+        FATAL(UNEXPECTED_SHAPE_ERROR": Scalar operation require a 0-D Node\n");
     }
 
     Node *n = node_placeholder(n1->data.dim, n1->data.num_dims, name);
@@ -157,7 +157,7 @@ Node *node_scalar_add(Node *n1, Node *n2, char *name)
 Node *node_scalar_sub(Node *n1, Node *n2, char *name)
 {
     if (n2->data.num_dims != 0) {
-        FATAL(UNEXPECTED_SHAPE_ERROR": scalar calculation require a 0-D Node\n");
+        FATAL(UNEXPECTED_SHAPE_ERROR": Scalar operation require a 0-D Node\n");
     }
 
     Node *n = node_placeholder(n1->data.dim, n1->data.num_dims, name);
@@ -183,7 +183,7 @@ Node *node_scalar_sub(Node *n1, Node *n2, char *name)
 Node *node_scalar_mul(Node *n1, Node *n2, char *name)
 {
     if (n2->data.num_dims != 0) {
-        FATAL(UNEXPECTED_SHAPE_ERROR": scalar calculation require a 0-D Node\n");
+        FATAL(UNEXPECTED_SHAPE_ERROR": Scalar operation require a 0-D Node\n");
     }
 
     Node *n = node_placeholder(n1->data.dim, n1->data.num_dims, name);
@@ -209,7 +209,7 @@ Node *node_scalar_mul(Node *n1, Node *n2, char *name)
 Node *node_scalar_div(Node *n1, Node *n2, char *name)
 {
     if (n2->data.num_dims != 0) {
-        FATAL(UNEXPECTED_SHAPE_ERROR": scalar calculation require a 0-D Node\n");
+        FATAL(UNEXPECTED_SHAPE_ERROR": Scalar operation require a 0-D Node\n");
     }
 
     Node *n = node_placeholder(n1->data.dim, n1->data.num_dims, name);
@@ -232,113 +232,19 @@ Node *node_scalar_div(Node *n1, Node *n2, char *name)
     return n;
 }
 
-/*
-float *node_eval(Node *target, FeedDict *feed, size_t len)
+Node *node_cost_mse(Node *logits, Node *labels, char *name)
 {
-    if (target->type == CONST || target->type == VAR) {
-        return target->val;
+    if (logits->data.len != labels->data.len || logits->data.num_dims != labels->data.num_dims) {
+        FATAL(UNEXPECTED_SHAPE_ERROR": The shape of logits and labels is unmatched\n");
     }
 
-    switch (target->expr.type) {
-        case ADD:
-            return node_eval(target->expr.args[0], feed, len) + node_eval(target->expr.args[1], feed, len);
-        case SUB:
-            return node_eval(target->expr.args[0], feed, len) - node_eval(target->expr.args[1], feed, len);
-        case MUL:
-            return node_eval(target->expr.args[0], feed, len) * node_eval(target->expr.args[1], feed, len);
-        case DIV:
-            return node_eval(target->expr.args[0], feed, len) / node_eval(target->expr.args[1], feed, len);
-        case MSE:
-            return sqrt(pow(node_eval(target->expr.args[0], feed, len) - node_eval(target->expr.args[1], feed, len), 2));
-        case NONE:
-            for (int i = 0; i < len; i++) {
-                if (!strcmp(target->name, feed[i].key)) {
-                    target->val = feed[i].val;
-                    return feed[i].val;
-                }
-            }
-            printf("Feed data not found\n");
-            exit(1);
+    Node *cost = node_placeholder(NULL, 0, name);
+    cost->expr.type = DL_COST_MSE;
+    cost->expr.args[0] = logits;
+    cost->expr.args[1] = labels;
+    cost->ref = NULL;
 
-        default:
-            printf("Unknown expression type\n");
-            exit(1);
-    }
+    logits->ref = cost;
+    labels->ref = cost;
+    return cost;
 }
-
-static float node_calc(Node *target)
-{
-    switch (target->expr.type) {
-        case NONE:
-            return target->val;
-        case ADD:
-            return target->expr.args[0]->val + target->expr.args[1]->val;
-        case SUB:
-            return target->expr.args[0]->val - target->expr.args[1]->val;
-        case MUL:
-            return target->expr.args[0]->val * target->expr.args[1]->val;
-        case DIV:
-            return target->expr.args[0]->val / target->expr.args[1]->val;
-
-        case MSE:
-            return sqrt(pow(target->expr.args[0]->val - target->expr.args[1]->val, 2));
-        default:
-            printf("Unknown expression type\n");
-            exit(1);
-    }
-}
-
-static float differential(Node *y, Node *x)
-{
-
-    assert(x == y->expr.args[0] || x == y->expr.args[1]);
-
-    const float esp = 0.0001;
-
-    float up, low;
-    float store_x = x->val;
-
-    x->val = store_x + esp;
-    up = node_calc(y);
-
-    x->val = store_x - esp;
-    low = node_calc(y);
-
-    x->val = store_x;
-
-    return (up - low) / (2 * esp);
-}
-
-void node_optimize(Node *target, float lr, FeedDict *feed, size_t len)
-{
-    Node *queue[32];
-    Node *ptr;
-    int head = 0;
-    int tail = 0;
-
-    node_eval(target, feed, len);
-
-    target->grad = 1;
-    queue[tail++] = target;
-
-    while (head != tail) {
-        ptr = queue[head];
-        head = (head + 1) % 32;
-        if (ptr->expr.type == NONE) {
-            if (ptr->type == VAR) {
-                ptr->val = ptr->val - ptr->grad * lr;
-            }
-            continue;
-        }
-
-        for (int i = 0; i < 2; i++) {
-            if (ptr->expr.args[i] != NULL) {
-                ptr->expr.args[i]->grad = ptr->grad * differential(ptr, ptr->expr.args[i]);
-                queue[tail] = ptr->expr.args[i];
-                tail = (tail + 1) % 32;
-            }
-        }
-    }
-
-}
-*/

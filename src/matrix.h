@@ -38,4 +38,6 @@ void matrix_scalar_sub(Matrix *res, Matrix *m, float val, int diff);
 void matrix_scalar_mul(Matrix *res, Matrix *m, float val, int diff);
 void matrix_scalar_div(Matrix *res, Matrix *m, float val, int diff);
 
+void matrix_cost_mse(Matrix *res, Matrix *logits, Matrix *labels, int diff);
+
 #endif

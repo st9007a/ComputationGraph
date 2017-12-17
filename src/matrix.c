@@ -71,3 +71,14 @@ void matrix_scalar_div(Matrix *res, Matrix *m, float val, int diff)
         assign(res->val[i], m->val[i] / val, diff);
     }
 }
+
+void matrix_cost_mse(Matrix *res, Matrix *logits, Matrix *labels, int diff)
+{
+    assert(logits->len == labels->len && logits->num_dims == labels->num_dims);
+
+    float sum = 0;
+    for (int i = 0; i < logits->len; i++) {
+        sum += pow(logits->val[i] - labels->val[i], 2);
+    }
+    assign(res->val[0], sum / logits->len, diff);
+}
