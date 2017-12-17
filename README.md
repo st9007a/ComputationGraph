@@ -1,9 +1,6 @@
-# Computation Graph
+# Deep Learning Framework
 
 ## Introduction
 
-A computation graph implementation with c language.
+A simple deep learning framework implementation with c language.
 
-## Feature Development
-
-- Apply matrix calcuation
