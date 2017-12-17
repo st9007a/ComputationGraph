@@ -21,8 +21,6 @@ int main ()
     Node *w = node_variable(NULL, 0, "w");
     Node *b = node_variable(NULL, 0, "b");
 
-    node_info(w, 0);
-    node_info(b, 0);
 
     Node *wx = node_scalar_mul(x, w, "wx");
     Node *wx_plus_b = node_scalar_add(wx, b, "wx_plus_b");
@@ -30,6 +28,10 @@ int main ()
     Node *loss = node_cost_mse(wx_plus_b, y, "loss");
 
     Matrix *res = node_eval(wx_plus_b, feed, 1);
+
+    node_info(w, 0);
+    node_info(b, 0);
+    printf("Before optimize: ");
     for (int i = 0; i < res->len; i++) {
         printf("%f ", res->val[i]);
     }
@@ -40,6 +42,9 @@ int main ()
     }
 
     res = node_eval(wx_plus_b, feed, 1);
+    node_info(w, 0);
+    node_info(b, 0);
+    printf("After optimize: ");
     for (int i = 0; i < res->len; i++) {
         printf("%f ", res->val[i]);
     }
