@@ -33,17 +33,17 @@ void node_info(Node *n, int ignore_val)
     printf("---------------------\n");
     printf("Type: ");
     switch (n->type) {
-        case DL_CONST:
-            printf("Constant\n");
-            break;
-        case DL_VAR:
-            printf("Variable\n");
-            break;
-        case DL_PLACEHOLDER:
-            printf("Placeholder\n");
-            break;
-        default:
-            printf("Unknown type\n");
+    case DL_CONST:
+        printf("Constant\n");
+        break;
+    case DL_VAR:
+        printf("Variable\n");
+        break;
+    case DL_PLACEHOLDER:
+        printf("Placeholder\n");
+        break;
+    default:
+        printf("Unknown type\n");
     }
 
     printf("Dimension: %d-D\n", n->data.num_dims);
@@ -71,22 +71,22 @@ print_expr:
     }
 
     switch (n->expr.type) {
-        case DL_SCALAR_ADD:
-            printf("Add\n");
-            break;
-        case DL_SCALAR_SUB:
-            printf("Sub\n");
-            break;
-        case DL_SCALAR_MUL:
-            printf("Mul\n");
-            break;
-        case DL_SCALAR_DIV:
-            printf("Div\n");
-            break;
-        case DL_COST_MSE:
-            printf("Mean Square Error\n");
-        default:
-            printf("Unknown\n");
+    case DL_SCALAR_ADD:
+        printf("Add\n");
+        break;
+    case DL_SCALAR_SUB:
+        printf("Sub\n");
+        break;
+    case DL_SCALAR_MUL:
+        printf("Mul\n");
+        break;
+    case DL_SCALAR_DIV:
+        printf("Div\n");
+        break;
+    case DL_COST_MSE:
+        printf("Mean Square Error\n");
+    default:
+        printf("Unknown\n");
     }
 
     printf("Arg 1: %s\n", n->expr.args[0]->name);
@@ -122,7 +122,7 @@ Node *node_constant(float *data, uint32_t *dim, uint32_t num_dims, char *name)
 
 Node *node_placeholder(uint32_t *dim, uint32_t num_dims, char *name)
 {
-    Node *n = malloc(sizeof(Node));
+    Node *n;
     NODE_INIT(n, dim, num_dims, DL_PLACEHOLDER);
 
     return n;
