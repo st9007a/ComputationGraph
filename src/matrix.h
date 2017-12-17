@@ -1,6 +1,8 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
+#include <stdint.h>
+
 #define MATRIX_INIT(m, dim, num_dims)          \
 	do {                                       \
 		uint32_t len = 1;                      \
@@ -24,5 +26,10 @@ struct __MATRIX {
 	uint32_t num_dims;
 	uint32_t len;
 };
+
+void init_random_norm(Matrix *m);
+void init_constant(Matrix *m, float *data, size_t len);
+void init_ones(Matrix *m);
+void init_zeros(Matrix *m);
 
 #endif

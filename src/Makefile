@@ -5,7 +5,8 @@ SOVERSION ?= 1
 REALVERSION ?= 1.0.0
 
 OBJS = \
-      graph.o
+      graph.o \
+	  matrix.o
 
 OUT = ../$(LIB_PATH)
 TARGET = $(OUT)/$(LIB_NAME)

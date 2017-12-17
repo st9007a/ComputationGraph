@@ -26,14 +26,6 @@
         n->ref = NULL;                         \
     } while(0);
 
-static inline float box_muller_sampling()
-{
-    int mean = 0;
-    int std = 1;
-
-    return sqrt(-2 * log(rand() / (float)RAND_MAX)) * cos(2 * M_PI * rand() / (float)RAND_MAX) * std + mean;
-}
-
 void node_info(Node *n, int ignore_val)
 {
     printf("---------------------\n");
@@ -113,9 +105,7 @@ Node *node_variable(uint32_t *dim, uint32_t num_dims, char *name)
     Node *n;
     NODE_INIT(n, dim, num_dims, DL_VAR);
 
-    for (int i = 0; i < n->data.len; i++) {
-        n->data.val[i] = box_muller_sampling();
-    }
+    init_random_norm(&n->data);
 
     return n;
 }
@@ -125,7 +115,7 @@ Node *node_constant(float *data, uint32_t *dim, uint32_t num_dims, char *name)
     Node *n;
     NODE_INIT(n, dim, num_dims, DL_CONST);
 
-    memcpy(n->data.val, data, sizeof(float) * n->data.len);
+    init_constant(&n->data, data, n->data.len);
 
     return n;
 }
