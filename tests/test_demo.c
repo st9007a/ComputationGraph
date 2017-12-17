@@ -11,7 +11,7 @@ int main ()
 
     Node *s = node_variable(NULL, 0, "s");
 
-    Node *m = scalar_add(x, s, "ScalarAdd");
+    Node *m = node_scalar_add(x, s, "ScalarAdd");
 
     node_info(x, 1);
     node_info(w, 1);
