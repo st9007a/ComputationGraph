@@ -22,10 +22,10 @@
 typedef struct __MATRIX Matrix;
 
 struct __MATRIX {
-	float *val;
-	uint32_t dim[4];
-	uint32_t num_dims;
-	uint32_t len;
+    float *val;
+    uint32_t dim[4];
+    uint32_t num_dims;
+    uint32_t len;
 };
 
 void matrix_init_random_norm(Matrix *m);
