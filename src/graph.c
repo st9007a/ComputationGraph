@@ -128,7 +128,7 @@ Node *node_placeholder(uint32_t *dim, uint32_t num_dims, char *name)
     return n;
 }
 
-Node *scalar_add(Node *n1, Node *n2, char *name)
+Node *node_scalar_add(Node *n1, Node *n2, char *name)
 {
     if (n2->data.num_dims != 0) {
         FATAL(UNEXPECTED_SHAPE_ERROR": scalar calculation require a 0-D Node\n");
@@ -154,7 +154,7 @@ Node *scalar_add(Node *n1, Node *n2, char *name)
     return n;
 }
 
-Node *scalar_sub(Node *n1, Node *n2, char *name)
+Node *node_scalar_sub(Node *n1, Node *n2, char *name)
 {
     if (n2->data.num_dims != 0) {
         FATAL(UNEXPECTED_SHAPE_ERROR": scalar calculation require a 0-D Node\n");
@@ -180,7 +180,7 @@ Node *scalar_sub(Node *n1, Node *n2, char *name)
     return n;
 }
 
-Node *scalar_mul(Node *n1, Node *n2, char *name)
+Node *node_scalar_mul(Node *n1, Node *n2, char *name)
 {
     if (n2->data.num_dims != 0) {
         FATAL(UNEXPECTED_SHAPE_ERROR": scalar calculation require a 0-D Node\n");
@@ -206,7 +206,7 @@ Node *scalar_mul(Node *n1, Node *n2, char *name)
     return n;
 }
 
-Node *scalar_div(Node *n1, Node *n2, char *name)
+Node *node_scalar_div(Node *n1, Node *n2, char *name)
 {
     if (n2->data.num_dims != 0) {
         FATAL(UNEXPECTED_SHAPE_ERROR": scalar calculation require a 0-D Node\n");
