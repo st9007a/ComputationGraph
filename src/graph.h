@@ -1,6 +1,7 @@
 #ifndef GRAPH_H
 #define GRAPH_H
 
+#include <stdint.h>
 #include "matrix.h"
 
 enum node_type {
@@ -42,7 +43,7 @@ struct __DL_FEED_DICT {
 	float val;
 };
 
-void node_info(Node *n);
+void node_info(Node *n, int ignore_val);
 
 Node *node_variable(uint32_t *dim, uint32_t num_dims, char *name);
 Node *node_constant(float *val, uint32_t *dim, uint32_t num_dims, char *name);
@@ -53,9 +54,9 @@ Node *scalar_mul(Node *n1, Node *n2, char *name);
 Node *scalar_div(Node *n1, Node *n2, char *name);
 Node *scalar_sub(Node *n1, Node *n2, char *name);
 
-Node *cost_mse(Node *n1, Node *n2, char *name);
-
-float node_eval(Node *target, FeedDict *feed, size_t len);
-void node_optimize(Node *target, float lr, FeedDict *feed, size_t len);
+// Node *cost_mse(Node *n1, Node *n2, char *name);
+//
+// float *node_eval(Node *target, FeedDict *feed, size_t len);
+// void node_optimize(Node *target, float lr, FeedDict *feed, size_t len);
 
 #endif

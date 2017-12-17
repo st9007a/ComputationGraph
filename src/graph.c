@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <math.h>
 #include <memory.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,7 +10,7 @@
 #include "matrix.h"
 #include "graph.h"
 
-#define NODE_INIT(n, dim, num_dims, type)      \
+#define NODE_INIT(n, dim, num_dims, TYPE)      \
     do {                                       \
         n = malloc(sizeof(Node));              \
         if (n == NULL) {                       \
@@ -18,7 +19,7 @@
         strcpy(n->name, name);                 \
         MATRIX_INIT(n->data, dim, num_dims);   \
         MATRIX_INIT(n->grad, dim, num_dims);   \
-        n->type = type;                        \
+        n->type = TYPE;                        \
         n->expr.type = DL_FUNC_NONE;           \
         n->expr.args[0] = NULL;                \
         n->expr.args[1] = NULL;                \
@@ -33,7 +34,7 @@ static inline float box_muller_sampling()
     return sqrt(-2 * log(rand() / (float)RAND_MAX)) * cos(2 * M_PI * rand() / (float)RAND_MAX) * std + mean;
 }
 
-void node_info(Node *n)
+void node_info(Node *n, int ignore_val)
 {
     printf("---------------------\n");
     printf("Name: %s\n", n->name);
@@ -53,18 +54,20 @@ void node_info(Node *n)
             printf("Unknown type\n");
     }
 
-    printf("Dimension: %d D\n", n->data.num_dims);
+    printf("Dimension: %d-D\n", n->data.num_dims);
     printf("Dimension Lenght: ");
     for (int i = 0; i < n->data.num_dims; i++) {
-        printf("%f ", n->data.dim[i]);
+        printf("%u ", n->data.dim[i]);
     }
     printf("\n");
 
-    printf("Value: ");
-    for (int i = 0; i < n->data.len; i++) {
-        printf("%f ", n->data.val[i]);
+    if (!ignore_val) {
+        printf("Value: ");
+        for (int i = 0; i < n->data.len; i++) {
+            printf("%f ", n->data.val[i]);
+        }
+        printf("\n");
     }
-    printf("\n");
 
     printf("Expression Type: ");
     if (n->expr.type == DL_FUNC_NONE) {
@@ -115,7 +118,7 @@ Node *node_variable(uint32_t *dim, uint32_t num_dims, char *name)
 Node *node_constant(float *data, uint32_t *dim, uint32_t num_dims, char *name)
 {
     Node *n;
-    NODE_INIT(n, dim, num_dimsi, DL_CONST);
+    NODE_INIT(n, dim, num_dims, DL_CONST);
 
     memcpy(n->data.val, data, sizeof(float) * n->data.len);
 
@@ -136,7 +139,7 @@ Node *scalar_add(Node *n1, Node *n2, char *name)
         FATAL(UNEXPECTED_SHAPE_ERROR": scalar calculation require a 0-D Node\n");
     }
 
-    Node *n = node_placeholder(n1->dim, n1->num_dims, name);
+    Node *n = node_placeholder(n1->data.dim, n1->data.num_dims, name);
 
     if (n1->type == DL_CONST && n2->type == DL_CONST) {
         n->type = DL_CONST;
@@ -162,7 +165,7 @@ Node *scalar_sub(Node *n1, Node *n2, char *name)
         FATAL(UNEXPECTED_SHAPE_ERROR": scalar calculation require a 0-D Node\n");
     }
 
-    Node *n = node_placeholder(n1->dim, n1->num_dims, name);
+    Node *n = node_placeholder(n1->data.dim, n1->data.num_dims, name);
 
     if (n1->type == DL_CONST && n2->type == DL_CONST) {
         n->type = DL_CONST;
@@ -188,7 +191,7 @@ Node *scalar_mul(Node *n1, Node *n2, char *name)
         FATAL(UNEXPECTED_SHAPE_ERROR": scalar calculation require a 0-D Node\n");
     }
 
-    Node *n = node_placeholder(n1->dim, n1->num_dims, name);
+    Node *n = node_placeholder(n1->data.dim, n1->data.num_dims, name);
 
     if (n1->type == DL_CONST && n2->type == DL_CONST) {
         n->type = DL_CONST;
@@ -214,7 +217,7 @@ Node *scalar_div(Node *n1, Node *n2, char *name)
         FATAL(UNEXPECTED_SHAPE_ERROR": scalar calculation require a 0-D Node\n");
     }
 
-    Node *n = node_placeholder(n1->dim, n1->num_dims, name);
+    Node *n = node_placeholder(n1->data.dim, n1->data.num_dims, name);
 
     if (n1->type == DL_CONST && n2->type == DL_CONST) {
         n->type = DL_CONST;
@@ -234,31 +237,8 @@ Node *scalar_div(Node *n1, Node *n2, char *name)
     return n;
 }
 
-Node *node_mse(Node *n1, Node *n2, char *name)
-{
-    Node *n = malloc(sizeof(Node));
-
-    strcpy(n->name, name);
-    n->ref = NULL;
-    n1->ref = n;
-    n2->ref = n;
-
-    if (n1->type == CONST && n2->type == CONST) {
-        n->type = CONST;
-        n->val = sqrt(pow(n1->val - n2->val, 2));
-        n->expr.type = NONE;
-        return n;
-    }
-
-    n->type = PLACEHOLDER;
-    n->expr.type = MSE;
-    n->expr.args[0] = n1;
-    n->expr.args[1] = n2;
-
-    return n;
-}
-
-float node_eval(Node *target, FeedDict *feed, size_t len)
+/*
+float *node_eval(Node *target, FeedDict *feed, size_t len)
 {
     if (target->type == CONST || target->type == VAR) {
         return target->val;
@@ -366,3 +346,4 @@ void node_optimize(Node *target, float lr, FeedDict *feed, size_t len)
     }
 
 }
+*/

@@ -5,7 +5,7 @@ SOVERSION ?= 1
 REALVERSION ?= 1.0.0
 
 OBJS = \
-      cg.o
+      graph.o
 
 OUT = ../$(LIB_PATH)
 TARGET = $(OUT)/$(LIB_NAME)
