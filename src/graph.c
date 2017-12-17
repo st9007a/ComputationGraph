@@ -61,41 +61,46 @@ void node_info(Node *n, int ignore_val)
     }
     printf("\n");
 
-    if (!ignore_val) {
-        printf("Value: ");
-        for (int i = 0; i < n->data.len; i++) {
-            printf("%f ", n->data.val[i]);
-        }
-        printf("\n");
+    if (ignore_val)
+        goto print_expr;
+
+    printf("Value: ");
+    for (int i = 0; i < n->data.len; i++) {
+        printf("%f ", n->data.val[i]);
     }
+    printf("\n");
+
+print_expr:
 
     printf("Expression Type: ");
     if (n->expr.type == DL_FUNC_NONE) {
         printf("None\n");
+        goto print_ref;
     }
-    else {
-        switch (n->expr.type) {
-            case DL_SCALAR_ADD:
-                printf("Add\n");
-                break;
-            case DL_SCALAR_SUB:
-                printf("Sub\n");
-                break;
-            case DL_SCALAR_MUL:
-                printf("Mul\n");
-                break;
-            case DL_SCALAR_DIV:
-                printf("Div\n");
-                break;
-            case DL_COST_MSE:
-                printf("Mean Square Error\n");
-            default:
-                printf("Unknown\n");
-        }
 
-        printf("Arg 1: %s\n", n->expr.args[0]->name);
-        printf("Arg 2: %s\n", n->expr.args[1]->name);
+    switch (n->expr.type) {
+        case DL_SCALAR_ADD:
+            printf("Add\n");
+            break;
+        case DL_SCALAR_SUB:
+            printf("Sub\n");
+            break;
+        case DL_SCALAR_MUL:
+            printf("Mul\n");
+            break;
+        case DL_SCALAR_DIV:
+            printf("Div\n");
+            break;
+        case DL_COST_MSE:
+            printf("Mean Square Error\n");
+        default:
+            printf("Unknown\n");
     }
+
+    printf("Arg 1: %s\n", n->expr.args[0]->name);
+    printf("Arg 2: %s\n", n->expr.args[1]->name);
+
+print_ref:
 
     if (n->ref != NULL) {
         printf("Ref: %s\n", n->ref->name);

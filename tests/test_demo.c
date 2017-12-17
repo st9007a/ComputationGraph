@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include "graph.h"
 
@@ -8,7 +9,7 @@ int main ()
     Node *x = node_placeholder(&x_dim, 1, "x");
     Node *w = node_variable(w_dim, 2, "w");
 
-    Node *s = node_variable(NULL, 1, "s");
+    Node *s = node_variable(NULL, 0, "s");
 
     Node *m = scalar_add(x, s, "ScalarAdd");
 
