@@ -7,6 +7,7 @@ REALVERSION ?= 1.0.0
 OBJS = \
       node.o \
 	  eval.o \
+	  optimize.o \
 	  matrix.o
 
 OUT = ../$(LIB_PATH)
