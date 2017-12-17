@@ -10,6 +10,8 @@ OBJS = \
 	  optimize.o \
 	  matrix.o
 
+deps = $(OBJS:%.o=.%.o.d)
+
 OUT = ../$(LIB_PATH)
 TARGET = $(OUT)/$(LIB_NAME)
 
@@ -19,7 +21,7 @@ SOFLAGS = -shared -Wl,-soname,$(TARGET).$(SOVERSION)
 all: $(TARGET)
 
 %.o: %.c
-	$(CC) $(CFLAGS) -o $@ -c $<
+	$(CC) $(CFLAGS) -o $@ -c -MMD -MF .$@.d $<
 
 $(TARGET): $(OBJS)
 	mkdir -p $(OUT)
@@ -28,4 +30,4 @@ $(TARGET): $(OBJS)
 	ln -s -f $(TARGET).$(REALVERSION) $(TARGET)
 
 clean:
-	$(RM) $(OBJS) $(OUT)
+	$(RM) $(OBJS) $(deps) $(OUT)
