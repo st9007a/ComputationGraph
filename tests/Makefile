@@ -4,7 +4,7 @@ SRC = ../src
 OUT = ../build
 
 EXEC := \
-	   test_demo
+	   test_node
 EXEC := $(addprefix $(OUT)/,$(EXEC))
 
 .PHONY: all clean check
