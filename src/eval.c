@@ -11,40 +11,13 @@ static inline void eval_func_none(Matrix *res, Matrix *m1, Matrix *m2, int diff)
 
 }
 
-static inline void eval_scalar_add(Matrix *res, Matrix *m1, Matrix *m2, int diff)
-{
-    matrix_scalar_add(res, m1, m2->val[0], diff);
-}
-
-static inline void eval_scalar_sub(Matrix *res, Matrix *m1, Matrix *m2, int diff)
-{
-    matrix_scalar_sub(res, m1, m2->val[0], diff);
-}
-
-
-static inline void eval_scalar_mul(Matrix *res, Matrix *m1, Matrix *m2, int diff)
-{
-    matrix_scalar_mul(res, m1, m2->val[0], diff);
-}
-
-
-static inline void eval_scalar_div(Matrix *res, Matrix *m1, Matrix *m2, int diff)
-{
-    matrix_scalar_div(res, m1, m2->val[0], diff);
-}
-
-static inline void eval_cost_mse(Matrix *res, Matrix *m1, Matrix *m2, int diff)
-{
-    matrix_cost_mse(res, m1, m2, diff);
-}
-
 const struct __DL_EVAL_FUNC_HOOK eval_funcs[6] = {
     { DL_FUNC_NONE, eval_func_none },
-    { DL_SCALAR_ADD, eval_scalar_add },
-    { DL_SCALAR_SUB, eval_scalar_sub },
-    { DL_SCALAR_MUL, eval_scalar_mul },
-    { DL_SCALAR_DIV, eval_scalar_div },
-    { DL_COST_MSE, eval_cost_mse },
+    { DL_SCALAR_ADD, matrix_scalar_add },
+    { DL_SCALAR_SUB, matrix_scalar_sub },
+    { DL_SCALAR_MUL, matrix_scalar_mul },
+    { DL_SCALAR_DIV, matrix_scalar_div },
+    { DL_COST_MSE, matrix_cost_mse },
 };
 
 Matrix *node_eval(Node *target, FeedDict *feed, size_t feed_size)

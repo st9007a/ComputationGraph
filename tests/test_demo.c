@@ -1,10 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "matrix.h"
 #include "graph.h"
 
 int main ()
 {
+    srand(time(NULL));
     int x_dim[2] = {2, 2};
     float x_val[4] = {1.0, 2.0, 3.0, 4.0};
 

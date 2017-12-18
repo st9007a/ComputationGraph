@@ -36,39 +36,43 @@ inline void matrix_init_zeros(Matrix *m)
     memset(m->val, 0, sizeof(float) * m->len);
 }
 
-void matrix_scalar_add(Matrix *res, Matrix *m, float val, int diff)
+void matrix_scalar_add(Matrix *res, Matrix *m1, Matrix *m2, int diff)
 {
-    assert(res->len == m->len && res->num_dims == m->num_dims);
+    assert(res->len == m1->len && res->num_dims == m1->num_dims);
+    assert(m2->len == 1 && m2->num_dims == 0);
 
-    for (int i = 0; i < m->len; i++) {
-        assign(res->val[i], m->val[i] + val, diff);
+    for (int i = 0; i < m1->len; i++) {
+        assign(res->val[i], m1->val[i] + m2->val[0], diff);
     }
 }
 
-void matrix_scalar_sub(Matrix *res, Matrix *m, float val, int diff)
+void matrix_scalar_sub(Matrix *res, Matrix *m1, Matrix *m2, int diff)
 {
-    assert(res->len == m->len && res->num_dims == m->num_dims);
+    assert(res->len == m1->len && res->num_dims == m1->num_dims);
+    assert(m2->len == 1 && m2->num_dims == 0);
 
-    for (int i = 0; i < m->len; i++) {
-        assign(res->val[i], m->val[i] - val, diff);
+    for (int i = 0; i < m1->len; i++) {
+        assign(res->val[i], m1->val[i] - m2->val[0], diff);
     }
 }
 
-void matrix_scalar_mul(Matrix *res, Matrix *m, float val, int diff)
+void matrix_scalar_mul(Matrix *res, Matrix *m1, Matrix *m2, int diff)
 {
-    assert(res->len == m->len && res->num_dims == m->num_dims);
+    assert(res->len == m1->len && res->num_dims == m1->num_dims);
+    assert(m2->len == 1 && m2->num_dims == 0);
 
-    for (int i = 0; i < m->len; i++) {
-        assign(res->val[i], m->val[i] * val, diff);
+    for (int i = 0; i < m1->len; i++) {
+        assign(res->val[i], m1->val[i] * m2->val[0], diff);
     }
 }
 
-void matrix_scalar_div(Matrix *res, Matrix *m, float val, int diff)
+void matrix_scalar_div(Matrix *res, Matrix *m1, Matrix *m2, int diff)
 {
-    assert(res->len == m->len && res->num_dims == m->num_dims);
+    assert(res->len == m1->len && res->num_dims == m1->num_dims);
+    assert(m2->len == 1 && m2->num_dims == 0);
 
-    for (int i = 0; i < m->len; i++) {
-        assign(res->val[i], m->val[i] / val, diff);
+    for (int i = 0; i < m1->len; i++) {
+        assign(res->val[i], m1->val[i] / m2->val[0], diff);
     }
 }
 
