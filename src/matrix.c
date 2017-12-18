@@ -76,6 +76,35 @@ void matrix_scalar_div(Matrix *res, Matrix *m1, Matrix *m2, int diff)
     }
 }
 
+//FIXME: assert
+void matrix_add(Matrix *res, Matrix *m1, Matrix *m2, int diff)
+{
+    for (int i = 0; i < res->len; i++) {
+        assign(res->val[i], m1->val[i] + m2->val[i], diff);
+    }
+}
+
+void matrix_sub(Matrix *res, Matrix *m1, Matrix *m2, int diff)
+{
+    for (int i = 0; i < res->len; i++) {
+        assign(res->val[i], m1->val[i] - m2->val[i], diff);
+    }
+}
+
+//FIXME: only support 2d matrix
+void matrix_mul(Matrix *res, Matrix *m1, Matrix *m2, int diff)
+{
+    for (int i = 0; i < m1->dim[0]; i++) {
+        for (int j = 0; j < m2->dim[1]; j++) {
+            float sum = 0;
+            for (int k = 0; k < m1->dim[1]; k++) {
+                sum += m1->val[i * m1->dim[1] + k] * m2->val[k * m2->dim[1] + j];
+            }
+            assign(res->val[i], sum, diff);
+        }
+    }
+}
+
 void matrix_cost_mse(Matrix *res, Matrix *logits, Matrix *labels, int diff)
 {
     assert(logits->len == labels->len && logits->num_dims == labels->num_dims);

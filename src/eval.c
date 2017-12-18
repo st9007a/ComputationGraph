@@ -11,12 +11,15 @@ static inline void eval_func_none(Matrix *res, Matrix *m1, Matrix *m2, int diff)
 
 }
 
-const struct __DL_EVAL_FUNC_HOOK eval_funcs[6] = {
+const struct __DL_EVAL_FUNC_HOOK eval_funcs[9] = {
     { DL_FUNC_NONE, eval_func_none },
     { DL_SCALAR_ADD, matrix_scalar_add },
     { DL_SCALAR_SUB, matrix_scalar_sub },
     { DL_SCALAR_MUL, matrix_scalar_mul },
     { DL_SCALAR_DIV, matrix_scalar_div },
+    { DL_MATRIX_ADD, matrix_add },
+    { DL_MATRIX_SUB, matrix_sub },
+    { DL_MATRIX_MUL, matrix_mul },
     { DL_COST_MSE, matrix_cost_mse },
 };
 

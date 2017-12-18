@@ -18,6 +18,10 @@ enum node_func_type {
     DL_SCALAR_MUL,
     DL_SCALAR_DIV,
 
+    DL_MATRIX_ADD,
+    DL_MATRIX_SUB,
+    DL_MATRIX_MUL,
+
     DL_COST_MSE,
 };
 
@@ -55,12 +59,16 @@ Node *node_scalar_mul(Node *n1, Node *n2, char *name);
 Node *node_scalar_div(Node *n1, Node *n2, char *name);
 Node *node_scalar_sub(Node *n1, Node *n2, char *name);
 
+Node *node_matrix_add(Node *n1, Node *n2, char *name);
+Node *node_matrix_sub(Node *n1, Node *n2, char *name);
+Node *node_matrix_mul(Node *n1, Node *n2, char *name);
+
 Node *node_cost_mse(Node *logits, Node *target, char *name);
 
 extern const struct __DL_EVAL_FUNC_HOOK {
     int idx;
     void (*op_func)(Matrix *res, Matrix *m1, Matrix *m2, int diff);
-} eval_funcs[6];
+} eval_funcs[9];
 
 Matrix *node_eval(Node *target, FeedDict *feed, size_t feed_size);
 void node_optimize(Node *target, float lr, FeedDict *feed, size_t feed_size);

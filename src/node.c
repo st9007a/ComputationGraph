@@ -232,6 +232,91 @@ Node *node_scalar_div(Node *n1, Node *n2, char *name)
     return n;
 }
 
+Node *node_matrix_add(Node *n1, Node *n2, char *name)
+{
+    if (n1->data.len != n2->data.len || n1->data.num_dims != n2->data.num_dims) {
+        FATAL(UNEXPECTED_SHAPE_ERROR": The shape of Node1 and Node2 is unmatched\n");
+    }
+
+    Node *n = node_placeholder(n1->data.dim, n1->data.num_dims, name);
+
+    if (n1->type == DL_CONST && n2->type == DL_CONST) {
+        n->type = DL_CONST;
+        for (int i = 0; i < n1->data.len; i++) {
+            n->data.val[i] = n1->data.val[i] + n2->data.val[i];
+        }
+    }
+
+    n->expr.type = DL_MATRIX_ADD;
+    n->expr.args[0] = n1;
+    n->expr.args[1] = n2;
+    n->ref = NULL;
+
+    n1->ref = n;
+    n2->ref = n;
+
+    return n;
+}
+
+Node *node_matrix_sub(Node *n1, Node *n2, char *name)
+{
+    if (n1->data.len != n2->data.len || n1->data.num_dims != n2->data.num_dims) {
+        FATAL(UNEXPECTED_SHAPE_ERROR": The shape of Node1 and Node2 is unmatched\n");
+    }
+
+    Node *n = node_placeholder(n1->data.dim, n1->data.num_dims, name);
+
+    if (n1->type == DL_CONST && n2->type == DL_CONST) {
+        n->type = DL_CONST;
+        for (int i = 0; i < n1->data.len; i++) {
+            n->data.val[i] = n1->data.val[i] - n2->data.val[i];
+        }
+    }
+
+    n->expr.type = DL_MATRIX_SUB;
+    n->expr.args[0] = n1;
+    n->expr.args[1] = n2;
+    n->ref = NULL;
+
+    n1->ref = n;
+    n2->ref = n;
+
+    return n;
+}
+
+// FIXME: it only support 2D matrix
+Node *node_matrix_mul(Node *n1, Node *n2, char *name)
+{
+    if (n1->data.dim[1] != n2->data.dim[0]) {
+        FATAL(UNEXPECTED_SHAPE_ERROR": The shape of Node1 and Node2 is unmatched\n");
+    }
+
+    Node *n = node_placeholder(n1->data.dim, n1->data.num_dims, name);
+
+    if (n1->type == DL_CONST && n2->type == DL_CONST) {
+        n->type = DL_CONST;
+
+        matrix_init_zeros(&n->data);
+        for (int i = 0; i < n1->data.dim[0]; i++) {
+            for (int j = 0; j < n2->data.dim[1]; j++) {
+                for (int k = 0; k < n1->data.dim[1]; k++) {
+                    n->data.val[i * n1->data.dim[1] + j] += n1->data.val[i * n1->data.dim[1] + k] * n2->data.val[k * n2->data.dim[1] + j];
+                }
+            }
+        }
+    }
+
+    n->expr.type = DL_MATRIX_MUL;
+    n->expr.args[0] = n1;
+    n->expr.args[1] = n2;
+    n->ref = NULL;
+
+    n1->ref = n;
+    n2->ref = n;
+
+    return n;
+}
+
 Node *node_cost_mse(Node *logits, Node *labels, char *name)
 {
     if (logits->data.len != labels->data.len || logits->data.num_dims != labels->data.num_dims) {
