@@ -291,7 +291,9 @@ Node *node_matrix_mul(Node *n1, Node *n2, char *name)
         FATAL(UNEXPECTED_SHAPE_ERROR": The shape of Node1 and Node2 is unmatched\n");
     }
 
+    n1->data.dim[1] = n2->data.dim[1];
     Node *n = node_placeholder(n1->data.dim, n1->data.num_dims, name);
+    n1->data.dim[1] = n2->data.dim[0];
 
     if (n1->type == DL_CONST && n2->type == DL_CONST) {
         n->type = DL_CONST;
