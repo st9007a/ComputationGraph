@@ -6,48 +6,48 @@
 
 #include "graph.h"
 
+#define CHECK(func, cond)                \
+    if (!(cond)) {                       \
+        printf("Test "func": Failed\n"); \
+        printf("Rule: "#cond"\n");       \
+        exit(1);                         \
+    }
+
+#define CHECK_SUCCESS(func) \
+    printf("Test "func": Success\n");
+
 void test_node_create_op(float *data, uint32_t *dim, uint32_t num_dims)
 {
-    Node *var = node_variable(dim, num_dims, "var");
-    if (var->type != DL_VAR ||
-            var->data.num_dims != num_dims ||
-            strcmp(var->name, "var") ||
-            memcmp(dim, var->data.dim, sizeof(int) * num_dims)) {
+    Node *test_node = node_variable(dim, num_dims, "var");
 
-        printf("Test node_variable(): Fail\n");
-        exit(1);
-    }
+    CHECK("node_variable()", test_node->type == DL_VAR);
+    CHECK("node_variable()", test_node->data.num_dims == num_dims);
+    CHECK("node_variable()", !strcmp(test_node->name, "var"));
+    CHECK("node_variable()", !memcmp(test_node->data.dim, dim, sizeof(int) * num_dims));
 
-    printf("Test node_variable(): Success\n");
+    CHECK_SUCCESS("node_variable()");
+    free(test_node);
 
-    Node *hold = node_placeholder(dim, num_dims, "holder");
-    if (hold->type != DL_PLACEHOLDER ||
-            hold->data.num_dims != num_dims ||
-            strcmp(hold->name, "holder") ||
-            memcmp(dim, hold->data.dim, sizeof(int) * num_dims)) {
+    test_node = node_placeholder(dim, num_dims, "holder");
 
-        printf("Test node_placeholder(): Fail\n");
-        exit(1);
-    }
+    CHECK("node_placeholder()", test_node->type == DL_PLACEHOLDER);
+    CHECK("node_placeholder()", test_node->data.num_dims == num_dims);
+    CHECK("node_placeholder()", !strcmp(test_node->name, "holder"));
+    CHECK("node_placeholder()", !memcmp(test_node->data.dim, dim, sizeof(int) * num_dims));
 
-    printf("Test node_placeholder(): Success\n");
+    CHECK_SUCCESS("node_placeholder()");
+    free(test_node);
 
-    Node *con = node_constant(data, dim, num_dims, "const");
-    if (con->type != DL_CONST ||
-            con->data.num_dims != num_dims ||
-            strcmp(con->name, "const") ||
-            memcmp(dim, con->data.dim, sizeof(int) * num_dims) ||
-            memcmp(data, con->data.val, sizeof(float) * con->data.len)) {
+    test_node = node_constant(data, dim, num_dims, "const");
 
-        printf("Test node_constant(): Fail\n");
-        exit(1);
-    }
+    CHECK("node_constant()", test_node->type == DL_CONST);
+    CHECK("node_constant()", test_node->data.num_dims == num_dims);
+    CHECK("node_constant()", !strcmp(test_node->name, "const"));
+    CHECK("node_constant()", !memcmp(test_node->data.dim, dim, sizeof(int) * num_dims));
+    CHECK("node_constant()", !memcmp(test_node->data.val, data, sizeof(int) * test_node->data.len));
 
-    printf("Test node_constant(): Success\n");
-
-    free(var);
-    free(hold);
-    free(con);
+    CHECK_SUCCESS("node_constant()");
+    free(test_node);
 }
 
 void test_node_scalar_op(uint32_t *dim, uint32_t num_dims)
@@ -55,60 +55,48 @@ void test_node_scalar_op(uint32_t *dim, uint32_t num_dims)
     Node *n1 = node_placeholder(dim, num_dims, "node1");
     Node *n2 = node_variable(NULL, 0, "scalar");
 
-    Node *add = node_scalar_add(n1, n2, "scalar_add");
+    Node *test_node = node_scalar_add(n1, n2, "scalar_add");
 
-    if (add->type != DL_PLACEHOLDER ||
-            add->data.num_dims != n1->data.num_dims ||
-            memcmp(add->data.dim, n1->data.dim, sizeof(int) * add->data.num_dims)) {
+    CHECK("node_scalar_add()", test_node->type == DL_PLACEHOLDER);
+    CHECK("node_scalar_add()", test_node->expr.type == DL_SCALAR_ADD);
+    CHECK("node_scalar_add()", test_node->data.num_dims == n1->data.num_dims);
+    CHECK("node_scalar_add()", !memcmp(test_node->data.dim, n1->data.dim, sizeof(int) * test_node->data.num_dims));
 
-        printf("Test node_scalar_add(): Fail\n");
-        exit(1);
-    }
+    CHECK_SUCCESS("node_scalar_add()");
+    free(test_node);
 
-    printf("Test node_scalar_add(): Success\n");
+    test_node = node_scalar_sub(n1, n2, "scalar_sub");
 
-    Node *sub = node_scalar_sub(n1, n2, "scalar_sub");
+    CHECK("node_scalar_sub()", test_node->type == DL_PLACEHOLDER);
+    CHECK("node_scalar_sub()", test_node->expr.type == DL_SCALAR_SUB);
+    CHECK("node_scalar_sub()", test_node->data.num_dims == n1->data.num_dims);
+    CHECK("node_scalar_sub()", !memcmp(test_node->data.dim, n1->data.dim, sizeof(int) * test_node->data.num_dims));
 
-    if (sub->type != DL_PLACEHOLDER ||
-            sub->data.num_dims != n1->data.num_dims ||
-            memcmp(sub->data.dim, n1->data.dim, sizeof(int) * sub->data.num_dims)) {
+    CHECK_SUCCESS("node_scalar_sub()");
+    free(test_node);
 
-        printf("Test node_scalar_sub(): Fail\n");
-        exit(1);
-    }
+    test_node = node_scalar_mul(n1, n2, "scalar_mul");
 
-    printf("Test node_scalar_sub(): Success\n");
+    CHECK("node_scalar_mul()", test_node->type == DL_PLACEHOLDER);
+    CHECK("node_scalar_mul()", test_node->expr.type == DL_SCALAR_MUL);
+    CHECK("node_scalar_mul()", test_node->data.num_dims == n1->data.num_dims);
+    CHECK("node_scalar_mul()", !memcmp(test_node->data.dim, n1->data.dim, sizeof(int) * test_node->data.num_dims));
 
-    Node *mul = node_scalar_mul(n1, n2, "scalar_mul");
+    CHECK_SUCCESS("node_scalar_mul()");
+    free(test_node);
 
-    if (mul->type != DL_PLACEHOLDER ||
-            mul->data.num_dims != n1->data.num_dims ||
-            memcmp(mul->data.dim, n1->data.dim, sizeof(int) * mul->data.num_dims)) {
+    test_node = node_scalar_div(n1, n2, "scalar_div");
 
-        printf("Test node_scalar_mul(): Fail\n");
-        exit(1);
-    }
+    CHECK("node_scalar_div()", test_node->type == DL_PLACEHOLDER);
+    CHECK("node_scalar_div()", test_node->expr.type == DL_SCALAR_DIV);
+    CHECK("node_scalar_div()", test_node->data.num_dims == n1->data.num_dims);
+    CHECK("node_scalar_div()", !memcmp(test_node->data.dim, n1->data.dim, sizeof(int) * test_node->data.num_dims));
 
-    printf("Test node_scalar_mul(): Success\n");
-
-    Node *div = node_scalar_div(n1, n2, "scalar_div");
-
-    if (div->type != DL_PLACEHOLDER ||
-            div->data.num_dims != n1->data.num_dims ||
-            memcmp(div->data.dim, n1->data.dim, sizeof(int) * div->data.num_dims)) {
-
-        printf("Test node_scalar_div(): Fail\n");
-        exit(1);
-    }
-
-    printf("Test node_scalar_div(): Success\n");
+    CHECK_SUCCESS("node_scalar_div()");
+    free(test_node);
 
     free(n1);
     free(n2);
-    free(add);
-    free(sub);
-    free(mul);
-    free(div);
 }
 
 int main()
