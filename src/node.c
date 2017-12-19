@@ -284,25 +284,36 @@ Node *node_matrix_sub(Node *n1, Node *n2, char *name)
     return n;
 }
 
-// FIXME: it only support 2D matrix
 Node *node_matrix_mul(Node *n1, Node *n2, char *name)
 {
-    if (n1->data.dim[1] != n2->data.dim[0]) {
+    if (n1->data.num_dims < 2 ||
+            n2->data.num_dims < 2 ||
+            n1->data.num_dims != n2->data.num_dims ||
+            memcmp(n1->data.dim, n2->data.dim, sizeof(int) * (n1->data.num_dims - 2)) ||
+            n1->data.dim[n1->data.num_dims - 1] != n2->data.dim[n2->data.num_dims - 2]
+       ) {
+
         FATAL(UNEXPECTED_SHAPE_ERROR": The shape of Node1 and Node2 is unmatched\n");
     }
 
-    n1->data.dim[1] = n2->data.dim[1];
+    n1->data.dim[n1->data.num_dims - 1] = n2->data.dim[n2->data.num_dims - 1];
     Node *n = node_placeholder(n1->data.dim, n1->data.num_dims, name);
-    n1->data.dim[1] = n2->data.dim[0];
+    n1->data.dim[n1->data.num_dims - 1] = n2->data.dim[n2->data.num_dims - 2];
 
     if (n1->type == DL_CONST && n2->type == DL_CONST) {
         n->type = DL_CONST;
 
         matrix_init_zeros(&n->data);
-        for (int i = 0; i < n1->data.dim[0]; i++) {
-            for (int j = 0; j < n2->data.dim[1]; j++) {
-                for (int k = 0; k < n1->data.dim[1]; k++) {
-                    n->data.val[i * n1->data.dim[1] + j] += n1->data.val[i * n1->data.dim[1] + k] * n2->data.val[k * n2->data.dim[1] + j];
+
+        int block = n->data.dim[n->data.num_dims - 2] * n->data.dim[n->data.num_dims - 1];
+
+        for (int i = 0; i < n->data.len; i += block) {
+            for (int a = 0; a < n->data.dim[n->data.num_dims - 2]; a++) {
+                for (int b = 0; b < n->data.dim[n->data.num_dims - 1]; b++) {
+                    for (int c = 0; c < n1->data.dim[n1->data.num_dims - 1]; c++) {
+                        n->data.val[block + a * n->data.dim[n->data.num_dims - 1] + b] =
+                            n1->data.val[block + a * n1->data.dim[n1->data.num_dims - 1] + c] * n2->data.val[block + c * n2->data.dim[n2->data.num_dims - 1] + b];
+                    }
                 }
             }
         }

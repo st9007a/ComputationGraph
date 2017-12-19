@@ -101,6 +101,7 @@ TEST_CASE(node_constant)
         }
     };
     Node *test_node = node_constant(data, dim, num_dims, "const");
+    CHECK("node_constant()", !memcmp(test_node->data.val, data, sizeof(float) * test_node->data.len));
     CHECK_NODE("node_constant()", test_node, expect);
     free(test_node);
 }
@@ -287,6 +288,39 @@ TEST_CASE(node_matrix_sub)
     free(n2);
 }
 
+TEST_CASE(node_matrix_mul)
+{
+    int n1_dim[2] = {2, 3};
+    int n2_dim[2] = {3, 2};
+
+    Node *n1 = node_placeholder(n1_dim, 2, "node1");
+    Node *n2 = node_variable(n2_dim, 2, "node2");
+
+    Node *test_node = node_matrix_mul(n1, n2, "matrix_mul");
+
+    Node expect = {
+        .type = DL_PLACEHOLDER,
+        .name = "matrix_mul",
+        .data = {
+            .dim = {2, 2},
+            .num_dims = 2,
+        },
+        .grad = {
+            .dim = {2, 2},
+            .num_dims = 2,
+        },
+        .expr = {
+            .type = DL_MATRIX_MUL,
+            .args = {n1, n2},
+        },
+    };
+
+    CHECK_NODE("node_matrix_mul()", test_node, expect);
+    free(test_node);
+    free(n1);
+    free(n2);
+}
+
 int main()
 {
 
@@ -303,6 +337,7 @@ int main()
 
     RUN_TEST_CASE(node_matrix_add);
     RUN_TEST_CASE(node_matrix_sub);
+    RUN_TEST_CASE(node_matrix_mul);
 
     return 0;
 }
