@@ -1,14 +1,31 @@
 #include <assert.h>
 #include <math.h>
 #include <memory.h>
+#include <stdio.h>
 #include <stdlib.h>
 
+#include "base.h"
 #include "matrix.h"
 
 // if diff = 0, it will execute dst = val
 // if diff = 1, it will execute dst = dst - val
 #define assign(dst, val, diff) \
     dst = dst * diff - ((diff << 1) - 1) * (val);
+
+void matrix_create(Matrix *m, uint32_t *dim, uint32_t num_dims)
+{
+    uint32_t len = 1;
+    for (int i = 0; i < num_dims; i++) {
+        m->dim[i] = dim[i];
+        len *= dim[i];
+    }
+    m->num_dims = num_dims;
+    m->len = len;
+    m->val = malloc(sizeof(float) * len);
+    if (m->val == NULL) {
+        FATAL(MEMORY_EXHAUSTED_ERROR"\n");
+    }
+}
 
 inline void matrix_init_random_norm(Matrix *m)
 {

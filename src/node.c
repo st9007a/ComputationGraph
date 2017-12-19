@@ -10,20 +10,20 @@
 #include "matrix.h"
 #include "graph.h"
 
-#define NODE_INIT(n, dim, num_dims, TYPE)      \
-    do {                                       \
-        n = malloc(sizeof(Node));              \
-        if (n == NULL) {                       \
-            FATAL(MEMORY_EXHAUSTED_ERROR"\n"); \
-        }                                      \
-        strcpy(n->name, name);                 \
-        MATRIX_INIT(n->data, dim, num_dims);   \
-        MATRIX_INIT(n->grad, dim, num_dims);   \
-        n->type = TYPE;                        \
-        n->expr.type = DL_FUNC_NONE;           \
-        n->expr.args[0] = NULL;                \
-        n->expr.args[1] = NULL;                \
-        n->ref = NULL;                         \
+#define NODE_INIT(n, dim, num_dims, TYPE)       \
+    do {                                        \
+        n = malloc(sizeof(Node));               \
+        if (n == NULL) {                        \
+            FATAL(MEMORY_EXHAUSTED_ERROR"\n");  \
+        }                                       \
+        strcpy(n->name, name);                  \
+        matrix_create(&n->data, dim, num_dims); \
+        matrix_create(&n->grad, dim, num_dims); \
+        n->type = TYPE;                         \
+        n->expr.type = DL_FUNC_NONE;            \
+        n->expr.args[0] = NULL;                 \
+        n->expr.args[1] = NULL;                 \
+        n->ref = NULL;                          \
     } while(0);
 
 void node_info(Node *n, int ignore_val)
