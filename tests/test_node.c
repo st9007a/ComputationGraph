@@ -4,49 +4,104 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "testing.h"
 #include "graph.h"
 
-#define CHECK(func, cond)                \
-    if (!(cond)) {                       \
-        printf("Test "func": Failed\n"); \
-        printf("Rule: "#cond"\n");       \
-        exit(1);                         \
-    }
+#define TEST_DATA {2.0, 1.0, 4.0, 3.0}
+#define TEST_DIM {2, 2}
+#define TEST_NUM_DIMS 2
 
-#define CHECK_SUCCESS(func) \
-    printf("Test "func": Success\n");
+#define TEST_START \
+    float test_data[4] = TEST_DATA; \
+    uint32_t test_dim[2] = TEST_DIM; \
+    uint32_t test_num_dims = 2;
 
-void test_create_op(float *data, uint32_t *dim, uint32_t num_dims)
+#define TEST_ARGS test_data, test_dim, test_num_dims
+#define TEST_CASE(name) void test_##name(float *data, uint32_t *dim, uint32_t num_dims)
+#define RUN_TEST_CASE(name) test_##name(TEST_ARGS);
+
+#define CHECK_NODE(func, test_node, expect) \
+    do { \
+        CHECK(func, test_node->type == expect.type); \
+        CHECK(func, !strcmp(test_node->name, expect.name)); \
+        \
+        CHECK(func, test_node->data.num_dims == expect.data.num_dims); \
+        CHECK(func, !memcmp(test_node->data.dim, expect.data.dim, sizeof(int) * TEST_NUM_DIMS)); \
+        \
+        CHECK(func, test_node->expr.type == expect.expr.type); \
+        CHECK(func, test_node->expr.args[0] == expect.expr.args[0]); \
+        CHECK(func, test_node->expr.args[1] == expect.expr.args[1]); \
+                \
+        CHECK_SUCCESS(func); \
+    } while(0);
+
+TEST_CASE(node_variable)
 {
+    Node expect = {
+        .name = "var",
+        .type = DL_VAR,
+        .data = {
+            .dim = TEST_DIM,
+            .num_dims = TEST_NUM_DIMS,
+        },
+        .grad = {
+            .dim = TEST_DIM,
+            .num_dims = TEST_NUM_DIMS,
+        },
+        .expr = {
+            .type = DL_FUNC_NONE,
+            .args = {NULL, NULL},
+        }
+    };
     Node *test_node = node_variable(dim, num_dims, "var");
 
-    CHECK("node_variable()", test_node->type == DL_VAR);
-    CHECK("node_variable()", test_node->data.num_dims == num_dims);
-    CHECK("node_variable()", !strcmp(test_node->name, "var"));
-    CHECK("node_variable()", !memcmp(test_node->data.dim, dim, sizeof(int) * num_dims));
-
-    CHECK_SUCCESS("node_variable()");
+    CHECK_NODE("node_variable()", test_node, expect);
     free(test_node);
+}
 
-    test_node = node_placeholder(dim, num_dims, "holder");
-
-    CHECK("node_placeholder()", test_node->type == DL_PLACEHOLDER);
-    CHECK("node_placeholder()", test_node->data.num_dims == num_dims);
-    CHECK("node_placeholder()", !strcmp(test_node->name, "holder"));
-    CHECK("node_placeholder()", !memcmp(test_node->data.dim, dim, sizeof(int) * num_dims));
-
-    CHECK_SUCCESS("node_placeholder()");
+TEST_CASE(node_placeholder)
+{
+    Node expect = {
+        .name = "holder",
+        .type = DL_PLACEHOLDER,
+        .data = {
+            .dim = TEST_DIM,
+            .num_dims = TEST_NUM_DIMS,
+        },
+        .grad = {
+            .dim = TEST_DIM,
+            .num_dims = TEST_NUM_DIMS,
+        },
+        .expr = {
+            .type = DL_FUNC_NONE,
+            .args = {NULL, NULL},
+        }
+    };
+    Node *test_node = node_placeholder(dim, num_dims, "holder");
+    CHECK_NODE("node_placeholder()", test_node, expect);
     free(test_node);
+}
 
-    test_node = node_constant(data, dim, num_dims, "const");
-
-    CHECK("node_constant()", test_node->type == DL_CONST);
-    CHECK("node_constant()", test_node->data.num_dims == num_dims);
-    CHECK("node_constant()", !strcmp(test_node->name, "const"));
-    CHECK("node_constant()", !memcmp(test_node->data.dim, dim, sizeof(int) * num_dims));
-    CHECK("node_constant()", !memcmp(test_node->data.val, data, sizeof(int) * test_node->data.len));
-
-    CHECK_SUCCESS("node_constant()");
+TEST_CASE(node_constant)
+{
+    Node expect = {
+        .name = "const",
+        .type = DL_CONST,
+        .data = {
+            .dim = TEST_DIM,
+            .num_dims = TEST_NUM_DIMS,
+        },
+        .grad = {
+            .dim = TEST_DIM,
+            .num_dims = TEST_NUM_DIMS,
+        },
+        .expr = {
+            .type = DL_FUNC_NONE,
+            .args = {NULL, NULL},
+        }
+    };
+    Node *test_node = node_constant(data, dim, num_dims, "const");
+    CHECK_NODE("node_constant()", test_node, expect);
     free(test_node);
 }
 
@@ -132,12 +187,12 @@ void test_matrix_op(uint32_t *dim, uint32_t num_dims)
 
 int main()
 {
-    float test_data[4] = { 2.0, 2.0, 3.0, 4.0 };
-    uint32_t test_dim[2] = { 2, 2 };
 
-    test_create_op(test_data, test_dim, 2);
-    test_scalar_op(test_dim, 2);
-    test_matrix_op(test_dim, 2);
+    TEST_START;
+
+    RUN_TEST_CASE(node_variable);
+    RUN_TEST_CASE(node_constant);
+    RUN_TEST_CASE(node_placeholder);
 
     return 0;
 }
