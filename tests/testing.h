@@ -5,14 +5,14 @@
 #define COLOR_GREEN "\x1b[32m"
 #define COLOR_RESET "\x1b[0m"
 
-#define CHECK(func, cond)                                      \
-    if (!(cond)) {                                             \
-        printf("Test "func": "COLOR_RED"Failed\n"COLOR_RESET); \
-        printf(COLOR_RED"Rule: "#cond"\n"COLOR_RESET);         \
-        exit(1);                                               \
+#define CHECK(func, cond)                                        \
+    if (!(cond)) {                                               \
+        printf("Test "func": "COLOR_RED"Failed"COLOR_RESET"\n"); \
+        printf(COLOR_RED"Rule: "#cond""COLOR_RESET"\n");         \
+        exit(1);                                                 \
     }
 
 #define CHECK_SUCCESS(func) \
-    printf("Test "func": "COLOR_GREEN"Success\n"COLOR_RESET);
+    printf("Test "func": "COLOR_GREEN"Success"COLOR_RESET"\n");
 
 #endif
