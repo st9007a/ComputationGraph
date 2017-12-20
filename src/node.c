@@ -310,10 +310,11 @@ Node *node_matrix_mul(Node *n1, Node *n2, char *name)
         for (int i = 0; i < n->data.len; i += block) {
             for (int a = 0; a < n->data.dim[n->data.num_dims - 2]; a++) {
                 for (int b = 0; b < n->data.dim[n->data.num_dims - 1]; b++) {
+                    float sum = 0;
                     for (int c = 0; c < n1->data.dim[n1->data.num_dims - 1]; c++) {
-                        n->data.val[block + a * n->data.dim[n->data.num_dims - 1] + b] =
-                            n1->data.val[block + a * n1->data.dim[n1->data.num_dims - 1] + c] * n2->data.val[block + c * n2->data.dim[n2->data.num_dims - 1] + b];
+                        sum += n1->data.val[i + a * n1->data.dim[n1->data.num_dims - 1] + c] * n2->data.val[i + c * n2->data.dim[n2->data.num_dims - 1] + b];
                     }
+                    n->data.val[i + a * n->data.dim[n->data.num_dims - 1] + b] = sum;
                 }
             }
         }

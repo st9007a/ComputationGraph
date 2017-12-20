@@ -113,16 +113,22 @@ void matrix_sub(Matrix *res, Matrix *m1, Matrix *m2, int diff)
     }
 }
 
-//FIXME: only support 2d matrix
 void matrix_mul(Matrix *res, Matrix *m1, Matrix *m2, int diff)
 {
-    for (int i = 0; i < m1->dim[0]; i++) {
-        for (int j = 0; j < m2->dim[1]; j++) {
-            float sum = 0;
-            for (int k = 0; k < m1->dim[1]; k++) {
-                sum += m1->val[i * m1->dim[1] + k] * m2->val[k * m2->dim[1] + j];
+    assert(m1->num_dims >= 2 && m2->num_dims >= 2);
+    assert(m1->num_dims == m2->num_dims);
+    assert(m1->dim[m1->num_dims - 1] == m2->dim[m2->num_dims - 2]);
+
+    int block = res->dim[res->num_dims - 2] * res->dim[res->num_dims - 1];
+    for (int i = 0; i < res->len; i += block) {
+        for (int a = 0; a < res->dim[res->num_dims - 2]; a++) {
+            for (int b = 0; b < res->dim[res->num_dims - 1]; b++) {
+                float sum = 0;
+                for (int c = 0; c < m1->dim[m1->num_dims - 1]; c++) {
+                    sum += m1->val[i + a * m1->dim[m1->num_dims - 1] + c] * m2->val[i + c * m2->dim[m2->num_dims - 1] + b];
+                }
+                assign(res->val[i + a * res->dim[res->num_dims - 1] + b], sum, diff)
             }
-            assign(res->val[i], sum, diff);
         }
     }
 }
