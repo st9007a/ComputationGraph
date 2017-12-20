@@ -1,7 +1,7 @@
 include ../global.mk
 
 SRC = ../src
-OUT = ../build
+OUT = ../output
 
 EXEC := \
 	   test_node \
@@ -24,4 +24,3 @@ check: $(OUT) $(EXEC)
 
 clean:
 	$(RM) $(EXEC)
-	rmdir $(OUT)
