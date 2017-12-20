@@ -55,15 +55,12 @@ TEST_CASE(matrix_init_constant)
         .dim = {2, 2},
         .len = 4,
         .num_dims = 2,
+        .val = data
     };
-
-    expect.val = malloc(sizeof(float) * expect.len);
-    memcpy(expect.val, data, sizeof(float) * expect.len);
 
     CHECK_MATRIX("matrix_init_constant()", res, expect, 1);
 
     free(res.val);
-    free(expect.val);
 }
 
 TEST_CASE(matrix_init_ones)
@@ -79,15 +76,12 @@ TEST_CASE(matrix_init_ones)
         .len = 4,
         .dim = {2, 2},
         .num_dims = 2,
+        .val = expect_data,
     };
-
-    expect.val = malloc(sizeof(float) * expect.len);
-    memcpy(expect.val, expect_data, sizeof(float) * expect.len);
 
     CHECK_MATRIX("matrix_init_ones()", res, expect, 1);
 
     free(res.val);
-    free(expect.val);
 }
 
 TEST_CASE(matrix_init_zeros)
@@ -103,15 +97,12 @@ TEST_CASE(matrix_init_zeros)
         .len = 4,
         .dim = {2, 2},
         .num_dims = 2,
+        .val = expect_data,
     };
-
-    expect.val = malloc(sizeof(float) * expect.len);
-    memcpy(expect.val, expect_data, sizeof(float) * expect.len);
 
     CHECK_MATRIX("matrix_init_zeros()", res, expect, 1);
 
     free(res.val);
-    free(expect.val);
 }
 
 TEST_CASE(matrix_scalar_add)
@@ -127,24 +118,20 @@ TEST_CASE(matrix_scalar_add)
     matrix_create(&m1, m1_dim, 2);
     matrix_create(&m2, NULL, 0);
 
-    m1.val = m1_data;
-    m2.val = &m2_data;
-
     Matrix expect = {
         .len = 4,
         .dim = {2, 2},
         .num_dims = 2,
+        .val = expect_data,
     };
 
-    expect.val = malloc(sizeof(float) * expect.len);
-    memcpy(expect.val, expect_data, sizeof(float) * expect.len);
-
+    m1.val = m1_data;
+    m2.val = &m2_data;
     matrix_scalar_add(&res, &m1, &m2, 0);
 
     CHECK_MATRIX("matrix_scalar_add()", res, expect, 1);
 
     free(res.val);
-    free(expect.val);
 }
 
 TEST_CASE(matrix_scalar_sub)
@@ -160,24 +147,20 @@ TEST_CASE(matrix_scalar_sub)
     matrix_create(&m1, m1_dim, 2);
     matrix_create(&m2, NULL, 0);
 
-    m1.val = m1_data;
-    m2.val = &m2_data;
-
     Matrix expect = {
         .len = 4,
         .dim = {2, 2},
         .num_dims = 2,
+        .val = expect_data,
     };
 
-    expect.val = malloc(sizeof(float) * expect.len);
-    memcpy(expect.val, expect_data, sizeof(float) * expect.len);
-
+    m1.val = m1_data;
+    m2.val = &m2_data;
     matrix_scalar_sub(&res, &m1, &m2, 0);
 
     CHECK_MATRIX("matrix_scalar_sub()", res, expect, 1);
 
     free(res.val);
-    free(expect.val);
 }
 
 TEST_CASE(matrix_scalar_mul)
@@ -193,24 +176,20 @@ TEST_CASE(matrix_scalar_mul)
     matrix_create(&m1, m1_dim, 2);
     matrix_create(&m2, NULL, 0);
 
-    m1.val = m1_data;
-    m2.val = &m2_data;
-
     Matrix expect = {
         .len = 4,
         .dim = {2, 2},
         .num_dims = 2,
+        .val = expect_data,
     };
 
-    expect.val = malloc(sizeof(float) * expect.len);
-    memcpy(expect.val, expect_data, sizeof(float) * expect.len);
-
+    m1.val = m1_data;
+    m2.val = &m2_data;
     matrix_scalar_mul(&res, &m1, &m2, 0);
 
     CHECK_MATRIX("matrix_scalar_mul()", res, expect, 1);
 
     free(res.val);
-    free(expect.val);
 }
 
 TEST_CASE(matrix_scalar_div)
@@ -226,36 +205,95 @@ TEST_CASE(matrix_scalar_div)
     matrix_create(&m1, m1_dim, 2);
     matrix_create(&m2, NULL, 0);
 
-    m1.val = m1_data;
-    m2.val = &m2_data;
-
     Matrix expect = {
         .len = 4,
         .dim = {2, 2},
         .num_dims = 2,
+        .val = expect_data,
     };
 
-    expect.val = malloc(sizeof(float) * expect.len);
-    memcpy(expect.val, expect_data, sizeof(float) * expect.len);
-
+    m1.val = m1_data;
+    m2.val = &m2_data;
     matrix_scalar_div(&res, &m1, &m2, 0);
 
     CHECK_MATRIX("matrix_scalar_div()", res, expect, 1);
 
     free(res.val);
-    free(expect.val);
+}
+
+TEST_CASE(matrix_add)
+{
+    uint32_t dim[2] = {2, 2};
+    float m1_data[4] = {1, 2, 3, 4};
+    float m2_data[4] = {4, 3, 2, 1};
+    float expect_data[4] = {5, 5, 5, 5};
+
+    Matrix res, m1, m2;
+
+    matrix_create(&res, dim, 2);
+    matrix_create(&m1, dim, 2);
+    matrix_create(&m2, dim, 2);
+
+    Matrix expect = {
+        .len = 4,
+        .dim = {2, 2},
+        .num_dims = 2,
+        .val = expect_data,
+    };
+
+    m1.val = m1_data;
+    m2.val = m2_data;
+    matrix_add(&res, &m1, &m2, 0);
+
+    CHECK_MATRIX("matrix_add()", res, expect, 1);
+
+    free(res.val);
+}
+
+TEST_CASE(matrix_sub)
+{
+    uint32_t dim[2] = {2, 2};
+    float m1_data[4] = {1, 2, 3, 4};
+    float m2_data[4] = {4, 3, 2, 1};
+    float expect_data[4] = {-3, -1, 1, 3};
+
+    Matrix res, m1, m2;
+
+    matrix_create(&res, dim, 2);
+    matrix_create(&m1, dim, 2);
+    matrix_create(&m2, dim, 2);
+
+    Matrix expect = {
+        .len = 4,
+        .dim = {2, 2},
+        .num_dims = 2,
+        .val = expect_data,
+    };
+
+    m1.val = m1_data;
+    m2.val = m2_data;
+    matrix_sub(&res, &m1, &m2, 0);
+
+    CHECK_MATRIX("matrix_sub()", res, expect, 1);
+
+    free(res.val);
 }
 
 int main()
 {
     RUN_TEST_CASE(matrix_create);
+
     RUN_TEST_CASE(matrix_init_constant);
     RUN_TEST_CASE(matrix_init_ones);
     RUN_TEST_CASE(matrix_init_zeros);
+
     RUN_TEST_CASE(matrix_scalar_add);
     RUN_TEST_CASE(matrix_scalar_sub);
     RUN_TEST_CASE(matrix_scalar_mul);
     RUN_TEST_CASE(matrix_scalar_div);
+
+    RUN_TEST_CASE(matrix_add);
+    RUN_TEST_CASE(matrix_sub);
 
     return 0;
 }

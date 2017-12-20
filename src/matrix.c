@@ -93,9 +93,11 @@ void matrix_scalar_div(Matrix *res, Matrix *m1, Matrix *m2, int diff)
     }
 }
 
-//FIXME: assert
 void matrix_add(Matrix *res, Matrix *m1, Matrix *m2, int diff)
 {
+    assert(m1->num_dims == m2->num_dims && m2->num_dims == res->num_dims);
+    assert(m1->len == m2->len && m2->len == res->len);
+
     for (int i = 0; i < res->len; i++) {
         assign(res->val[i], m1->val[i] + m2->val[i], diff);
     }
@@ -103,6 +105,9 @@ void matrix_add(Matrix *res, Matrix *m1, Matrix *m2, int diff)
 
 void matrix_sub(Matrix *res, Matrix *m1, Matrix *m2, int diff)
 {
+    assert(m1->num_dims == m2->num_dims && m2->num_dims == res->num_dims);
+    assert(m1->len == m2->len && m2->len == res->len);
+
     for (int i = 0; i < res->len; i++) {
         assign(res->val[i], m1->val[i] - m2->val[i], diff);
     }
