@@ -21,7 +21,7 @@
     } while(0);
 
 #define TEST_CASE(name) void test_##name()
-#define RUN_TEST_CASE(name) test_##name();
+#define RUN_TEST_CASE(name) test_##name()
 
 TEST_CASE(matrix_create)
 {
@@ -279,6 +279,50 @@ TEST_CASE(matrix_sub)
     free(res.val);
 }
 
+TEST_CASE(matrix_mul)
+{
+    uint32_t m1_dim[2] = {2, 3};
+    uint32_t m2_dim[2] = {3, 2};
+    uint32_t res_dim[2] = {2, 2};
+
+    float m1_data[6] = {
+        1, 2, 3,
+        4, 5, 6,
+    };
+
+    float m2_data[6] = {
+        1, 2,
+        3, 4,
+        5, 6,
+    };
+
+    float expect_data[4] = {
+        22, 28,
+        49, 64,
+    };
+
+    Matrix res, m1, m2;
+
+    matrix_create(&res, res_dim, 2);
+    matrix_create(&m1, m1_dim, 2);
+    matrix_create(&m2, m2_dim, 2);
+
+    Matrix expect = {
+        .len = 4,
+        .dim = {2, 2},
+        .num_dims = 2,
+        .val = expect_data,
+    };
+
+    m1.val = m1_data;
+    m2.val = m2_data;
+    matrix_mul(&res, &m1, &m2, 0);
+
+    CHECK_MATRIX("matrix_mul()", res, expect, 1);
+
+    free(res.val);
+}
+
 int main()
 {
     RUN_TEST_CASE(matrix_create);
@@ -294,6 +338,7 @@ int main()
 
     RUN_TEST_CASE(matrix_add);
     RUN_TEST_CASE(matrix_sub);
+    RUN_TEST_CASE(matrix_mul);
 
     return 0;
 }
