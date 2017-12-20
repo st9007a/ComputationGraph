@@ -23,8 +23,8 @@ static void node_partial_diff(Node *func, Node *x)
         x->data.val[i] = hold - EPSILSON;
 
         eval(func, 1);
-        for (int i = 0; i < func->data.len; i++) {
-            x->grad.val[i] += (func->grad.val[i] / (2 * EPSILSON)) * func->data.val[i];
+        for (int j = 0; j < func->data.len; j++) {
+            x->grad.val[i] += (func->data.val[j] / (2 * EPSILSON)) * func->grad.val[j];
         }
         x->data.val[i] = hold;
     }

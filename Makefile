@@ -1,5 +1,5 @@
 TOPTARGETS = all clean
-SUBDIRS = src tests
+SUBDIRS = src tests examples
 GIT_HOOKS := .git/hooks/applied
 
 .PHONY: $(TOPTARGETS) $(SUBDIRS) check
@@ -15,3 +15,6 @@ $(SUBDIRS):
 
 check:
 	@$(MAKE) -C tests check
+
+demo:
+	@$(MAKE) -C examples run

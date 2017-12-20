@@ -32,6 +32,7 @@ int main ()
                     "wx_plus_b"
                 );
 
+    printf("Before optimize: ");
     Matrix *res = node_eval(out, feed, 2);
     for (int i = 0; i < res->len; i++) {
         printf("%f ", res->val[i]);
@@ -44,9 +45,16 @@ int main ()
         node_optimize(loss, 0.01, feed, 2);
     }
 
+    printf("After optimize: ");
     res = node_eval(out, feed, 2);
     for (int i = 0; i < res->len; i++) {
         printf("%f ", res->val[i]);
+    }
+    printf("\n");
+
+    printf("True ans: ");
+    for (int i = 0; i < 3; i++) {
+        printf("%f ", y_val[i]);
     }
     printf("\n");
 
