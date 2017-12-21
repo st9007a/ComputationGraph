@@ -133,6 +133,15 @@ void matrix_mul(Matrix *res, Matrix *m1, Matrix *m2, int diff)
     }
 }
 
+void matrix_nn_sigmoid(Matrix *res, Matrix *preact, Matrix *hold, int diff)
+{
+    assert(res->num_dims == preact->num_dims && res->len == preact->len);
+
+    for (int i = 0; i < res->len; i++) {
+        assign(res->val[i], 1 / (1 + exp(0 - preact->val[i])), diff);
+    }
+}
+
 void matrix_cost_mse(Matrix *res, Matrix *logits, Matrix *labels, int diff)
 {
     assert(logits->len == labels->len && logits->num_dims == labels->num_dims);

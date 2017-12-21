@@ -11,7 +11,7 @@ int main ()
     float x_val[2] = {1.0, 2.0};
 
     int y_dim[2] = {1, 3};
-    float y_val[3] = {2.9, 5.05, 7.2};
+    float y_val[3] = {0, 1, 1};
 
     FeedDict feed[2] = {
         { .key = "x", .val = x_val, .len = 2, },
@@ -26,11 +26,13 @@ int main ()
     Node *w = node_variable(w_dim, 2, "w");
     Node *b = node_variable(b_dim, 2, "b");
 
-    Node *out = node_matrix_add(
-                    node_matrix_mul(x, w, "wx"),
-                    b,
-                    "wx_plus_b"
-                );
+    Node *preact = node_matrix_add(
+                       node_matrix_mul(x, w, "wx"),
+                       b,
+                       "wx_plus_b"
+                   );
+
+    Node *out = node_nn_sigmoid(preact, "out");
 
     printf("Before optimize: ");
     Matrix *res = node_eval(out, feed, 2);
@@ -41,7 +43,7 @@ int main ()
 
     Node *loss = node_cost_mse(out, y, "mse");
 
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 10000; i++) {
         node_optimize(loss, 0.01, feed, 2);
     }
 

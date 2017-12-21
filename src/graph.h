@@ -22,6 +22,8 @@ enum node_func_type {
     DL_MATRIX_SUB,
     DL_MATRIX_MUL,
 
+    DL_NN_SIGMOID,
+
     DL_COST_MSE,
 };
 
@@ -63,12 +65,14 @@ Node *node_matrix_add(Node *n1, Node *n2, char *name);
 Node *node_matrix_sub(Node *n1, Node *n2, char *name);
 Node *node_matrix_mul(Node *n1, Node *n2, char *name);
 
+Node *node_nn_sigmoid(Node *preact, char *name);
+
 Node *node_cost_mse(Node *logits, Node *target, char *name);
 
 extern const struct __DL_EVAL_FUNC_HOOK {
     int idx;
     void (*op_func)(Matrix *res, Matrix *m1, Matrix *m2, int diff);
-} eval_funcs[9];
+} eval_funcs[10];
 
 Matrix *node_eval(Node *target, FeedDict *feed, size_t feed_size);
 void node_optimize(Node *target, float lr, FeedDict *feed, size_t feed_size);

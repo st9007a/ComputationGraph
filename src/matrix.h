@@ -4,9 +4,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
-typedef struct __MATRIX Matrix;
+typedef struct __DL_MATRIX Matrix;
 
-struct __MATRIX {
+struct __DL_MATRIX {
     float *val;
     uint32_t dim[4];
     uint32_t num_dims;
@@ -28,6 +28,8 @@ void matrix_scalar_div(Matrix *res, Matrix *m1, Matrix *m2, int diff);
 void matrix_add(Matrix *res, Matrix *m1, Matrix *m2, int diff);
 void matrix_sub(Matrix *res, Matrix *m1, Matrix *m2, int diff);
 void matrix_mul(Matrix *res, Matrix *m1, Matrix *m2, int diff);
+
+void matrix_nn_sigmoid(Matrix *res, Matrix *preact, Matrix *hold, int diff);
 
 void matrix_cost_mse(Matrix *res, Matrix *logits, Matrix *labels, int diff);
 
