@@ -60,7 +60,7 @@ struct __DL_FEED_DICT {
     float *val;
 };
 
-extern struct __DL_API_GATEWAY {
+extern const struct __DL_API_GATEWAY {
     Matrix *(*eval)(Node *target, FeedDict *feed, size_t feed_size);
     void (*optimize)(Node *target, float lr, FeedDict *feed, size_t feed_size);
     struct {

@@ -2,7 +2,7 @@
 #include "matrix.h"
 #include "graph.h"
 
-struct __DL_API_GATEWAY dl = {
+const struct __DL_API_GATEWAY dl = {
     .eval = node_eval,
     .optimize = node_optimize,
     .debug = {
