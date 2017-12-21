@@ -3,15 +3,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
-
-typedef struct __DL_MATRIX Matrix;
-
-struct __DL_MATRIX {
-    float *val;
-    uint32_t dim[4];
-    uint32_t num_dims;
-    uint32_t len;
-};
+#include "dl.h"
 
 void matrix_create(Matrix *m, uint32_t *dim, uint32_t num_dims);
 

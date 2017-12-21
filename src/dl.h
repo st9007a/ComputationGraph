@@ -2,7 +2,7 @@
 #define DL_H
 
 #include <stdint.h>
-#include "matrix.h"
+#include <stddef.h>
 
 enum node_type {
     DL_CONST,
@@ -29,10 +29,18 @@ enum node_func_type {
     DL_COST_MSE,
 };
 
+typedef struct __DL_MATRIX Matrix;
 typedef struct __DL_NODE Node;
 typedef struct __DL_FEED_DICT FeedDict;
 
 #define DL_NODE_NAME_LEN 128
+
+struct __DL_MATRIX {
+    float *val;
+    uint32_t dim[4];
+    uint32_t num_dims;
+    uint32_t len;
+};
 
 struct __DL_NODE {
     enum node_type type;
