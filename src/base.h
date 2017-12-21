@@ -2,10 +2,10 @@
 #define BASE_H
 
 #define FATAL(fmt, ...)             \
-	do {                            \
-		printf(fmt, ##__VA_ARGS__); \
-		exit(1);                    \
-	} while(0);
+    do {                            \
+        printf(fmt, ##__VA_ARGS__); \
+        exit(1);                    \
+    } while(0);
 
 #define MEMORY_EXHAUSTED_ERROR "Memory Exhausted Error"
 #define RESOURCE_EXHAUSTED_ERROR "Resource Exhausted Error"
