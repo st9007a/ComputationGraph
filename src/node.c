@@ -371,6 +371,31 @@ Node *node_nn_sigmoid(Node *preact, char *name)
     return activate;
 }
 
+//FIXME: it will softmax all element
+Node *node_nn_softmax(Node *preact, char *name)
+{
+    Node *activate = node_placeholder(preact->data.dim, preact->data.num_dims, name);
+
+    if (preact->type == DL_CONST) {
+        activate->type = DL_CONST;
+        float sum = 0;
+        for (int i = 0; i < preact->data.len; i++) {
+            sum += exp(preact->data.val[i]);
+        }
+        for (int i = 0; i < activate->data.len; i++) {
+            activate->data.val[i] = exp(preact->data.val[i]) / sum;
+        }
+    }
+
+    activate->expr.type = DL_NN_SOFTMAX;
+    activate->expr.args[0] = preact;
+
+    preact->ref = activate;
+    activate->ref = NULL;
+
+    return activate;
+}
+
 Node *node_cost_mse(Node *logits, Node *labels, char *name)
 {
     if (logits->data.len != labels->data.len || logits->data.num_dims != labels->data.num_dims) {

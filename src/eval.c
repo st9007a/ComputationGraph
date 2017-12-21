@@ -11,7 +11,7 @@ static inline void eval_func_none(Matrix *res, Matrix *m1, Matrix *m2, int diff)
 
 }
 
-const struct __DL_EVAL_FUNC_HOOK eval_funcs[11] = {
+const struct __DL_EVAL_FUNC_HOOK eval_funcs[12] = {
     { DL_FUNC_NONE, eval_func_none },
     { DL_SCALAR_ADD, matrix_scalar_add },
     { DL_SCALAR_SUB, matrix_scalar_sub },
@@ -22,6 +22,7 @@ const struct __DL_EVAL_FUNC_HOOK eval_funcs[11] = {
     { DL_MATRIX_MUL, matrix_mul },
     { DL_NN_RELU, matrix_nn_relu },
     { DL_NN_SIGMOID, matrix_nn_sigmoid },
+    { DL_NN_SOFTMAX, matrix_nn_softmax },
     { DL_COST_MSE, matrix_cost_mse },
 };
 

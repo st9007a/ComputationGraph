@@ -31,6 +31,7 @@ void matrix_mul(Matrix *res, Matrix *m1, Matrix *m2, int diff);
 
 void matrix_nn_relu(Matrix *res, Matrix *preact, Matrix *hold, int diff);
 void matrix_nn_sigmoid(Matrix *res, Matrix *preact, Matrix *hold, int diff);
+void matrix_nn_softmax(Matrix *res, Matrix *preact, Matrix *hold, int diff);
 
 void matrix_cost_mse(Matrix *res, Matrix *logits, Matrix *labels, int diff);
 

@@ -36,7 +36,7 @@ int main ()
     Node *hidden = node_nn_relu(preact1, "hidden");
 
     Node *preact2 = node_matrix_add(node_matrix_mul(hidden, w2, ""), b2, "");
-    Node *out = node_nn_sigmoid(preact2, "out");
+    Node *out = node_nn_softmax(preact2, "out");
 
     printf("Before optimize: ");
     Matrix *res = node_eval(out, feed, 2);

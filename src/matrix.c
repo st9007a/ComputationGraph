@@ -151,6 +151,19 @@ void matrix_nn_sigmoid(Matrix *res, Matrix *preact, Matrix *hold, int diff)
     }
 }
 
+void matrix_nn_softmax(Matrix *res, Matrix *preact, Matrix *hold, int diff)
+{
+    assert(res->num_dims == preact->num_dims && res->len == preact->len);
+
+    float sum = 0;
+    for (int i = 0; i < preact->len; i++) {
+        sum += exp(preact->val[i]);
+    }
+    for (int i = 0; i < res->len; i++) {
+        assign(res->val[i], exp(preact->val[i]) / sum, diff);
+    }
+}
+
 void matrix_cost_mse(Matrix *res, Matrix *logits, Matrix *labels, int diff)
 {
     assert(logits->len == labels->len && logits->num_dims == labels->num_dims);
