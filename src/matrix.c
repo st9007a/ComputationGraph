@@ -133,6 +133,15 @@ void matrix_mul(Matrix *res, Matrix *m1, Matrix *m2, int diff)
     }
 }
 
+void matrix_nn_relu(Matrix *res, Matrix *preact, Matrix *hold, int diff)
+{
+    assert(res->num_dims == preact->num_dims && res->len == preact->len);
+
+    for (int i = 0; i < res->len; i++) {
+        assign(res->val[i], preact->val[i] >= 0 ? preact->val[i] : 0, diff);
+    }
+}
+
 void matrix_nn_sigmoid(Matrix *res, Matrix *preact, Matrix *hold, int diff)
 {
     assert(res->num_dims == preact->num_dims && res->len == preact->len);

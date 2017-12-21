@@ -331,6 +331,26 @@ Node *node_matrix_mul(Node *n1, Node *n2, char *name)
     return n;
 }
 
+Node *node_nn_relu(Node *preact, char *name)
+{
+    Node *activate = node_placeholder(preact->data.dim, preact->data.num_dims, name);
+
+    if (preact->type == DL_CONST) {
+        activate->type = DL_CONST;
+        for (int i = 0; i < activate->data.len; i++) {
+            activate->data.val[i] = preact->data.val[i] >= 0 ? preact->data.val[i] : 0;
+        }
+    }
+
+    activate->expr.type = DL_NN_RELU;
+    activate->expr.args[0] = preact;
+
+    preact->ref = activate;
+    activate->ref = NULL;
+
+    return activate;
+}
+
 Node *node_nn_sigmoid(Node *preact, char *name)
 {
     Node *activate = node_placeholder(preact->data.dim, preact->data.num_dims, name);
