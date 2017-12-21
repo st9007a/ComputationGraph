@@ -95,11 +95,12 @@ void matrix_scalar_div(Matrix *res, Matrix *m1, Matrix *m2, int diff)
 
 void matrix_add(Matrix *res, Matrix *m1, Matrix *m2, int diff)
 {
-    assert(m1->num_dims == m2->num_dims && m2->num_dims == res->num_dims);
-    assert(m1->len == m2->len && m2->len == res->len);
+    assert(!memcmp(m2->dim, m1->dim + m1->num_dims - m2->num_dims, m2->num_dims));
 
-    for (int i = 0; i < res->len; i++) {
-        assign(res->val[i], m1->val[i] + m2->val[i], diff);
+    for (int i = 0; i < res->len; i += m2->len) {
+        for (int j = 0; j < m2->len; j++) {
+            assign(res->val[i + j], m1->val[i + j] + m2->val[j], diff);
+        }
     }
 }
 

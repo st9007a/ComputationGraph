@@ -3,3 +3,4 @@ tmp/
 lib/
 *.o
 *.o.d
+*.swp

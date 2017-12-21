@@ -21,15 +21,15 @@ int main ()
     Node *y = dl.tensor.placeholder(y_dim, 2, "y");
 
     int w1_dim[2] = {2, 4};
-    int b1_dim[2] = {1, 4};
+    int b1_dim[1] = {4};
 
     int w2_dim[2] = {4, 3};
-    int b2_dim[2] = {1, 3};
+    int b2_dim[1] = {3};
 
     Node *w1 = dl.tensor.variable(w1_dim, 2, "w1");
-    Node *b1 = dl.tensor.variable(b1_dim, 2, "b1");
+    Node *b1 = dl.tensor.variable(b1_dim, 1, "b1");
     Node *w2 = dl.tensor.variable(w2_dim, 2, "w2");
-    Node *b2 = dl.tensor.variable(b2_dim, 2, "b2");
+    Node *b2 = dl.tensor.variable(b2_dim, 1, "b2");
 
     Node *preact1 = dl.matrix.add(dl.matrix.mul(x, w1, ""), b1, "");
     Node *hidden = dl.activate.relu(preact1, "hidden");

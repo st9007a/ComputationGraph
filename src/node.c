@@ -238,7 +238,7 @@ Node *node_scalar_div(Node *n1, Node *n2, char *name)
 
 Node *node_matrix_add(Node *n1, Node *n2, char *name)
 {
-    if (n1->data.len != n2->data.len || n1->data.num_dims != n2->data.num_dims) {
+    if (memcmp(n2->data.dim, n1->data.dim + n1->data.num_dims - n2->data.num_dims, n2->data.num_dims * sizeof(int))) {
         FATAL(UNEXPECTED_SHAPE_ERROR": The shape of Node1 and Node2 is unmatched\n");
     }
 
@@ -246,8 +246,10 @@ Node *node_matrix_add(Node *n1, Node *n2, char *name)
 
     if (n1->type == DL_CONST && n2->type == DL_CONST) {
         n->type = DL_CONST;
-        for (int i = 0; i < n1->data.len; i++) {
-            n->data.val[i] = n1->data.val[i] + n2->data.val[i];
+        for (int i = 0; i < n1->data.len; i += n2->data.len) {
+            for (int j = 0; j < n2->data.len; j++) {
+                n->data.val[i + j] = n1->data.val[i + j] + n2->data.val[j];
+            }
         }
     }
 

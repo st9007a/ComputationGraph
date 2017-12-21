@@ -225,14 +225,14 @@ TEST_CASE(matrix_add)
 {
     uint32_t dim[2] = {2, 2};
     float m1_data[4] = {1, 2, 3, 4};
-    float m2_data[4] = {4, 3, 2, 1};
-    float expect_data[4] = {5, 5, 5, 5};
+    float m2_data[2] = {4, 3};
+    float expect_data[4] = {5, 5, 7, 7};
 
     Matrix res, m1, m2;
 
     matrix_create(&res, dim, 2);
     matrix_create(&m1, dim, 2);
-    matrix_create(&m2, dim, 2);
+    matrix_create(&m2, dim, 1);
 
     Matrix expect = {
         .len = 4,
