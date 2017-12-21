@@ -89,8 +89,12 @@ print_expr:
         printf("Unknown\n");
     }
 
-    printf("Arg 1: %s\n", n->expr.args[0]->name);
-    printf("Arg 2: %s\n", n->expr.args[1]->name);
+    if (n->expr.args[0] != NULL) {
+        printf("Arg 1: %s\n", n->expr.args[0]->name);
+    }
+    if (n->expr.args[1] != NULL) {
+        printf("Arg 2: %s\n", n->expr.args[1]->name);
+    }
 
 print_ref:
 
@@ -331,7 +335,7 @@ Node *node_matrix_mul(Node *n1, Node *n2, char *name)
     return n;
 }
 
-Node *node_nn_relu(Node *preact, char *name)
+Node *node_act_relu(Node *preact, char *name)
 {
     Node *activate = node_placeholder(preact->data.dim, preact->data.num_dims, name);
 
@@ -342,7 +346,7 @@ Node *node_nn_relu(Node *preact, char *name)
         }
     }
 
-    activate->expr.type = DL_NN_RELU;
+    activate->expr.type = DL_ACT_RELU;
     activate->expr.args[0] = preact;
 
     preact->ref = activate;
@@ -351,7 +355,7 @@ Node *node_nn_relu(Node *preact, char *name)
     return activate;
 }
 
-Node *node_nn_sigmoid(Node *preact, char *name)
+Node *node_act_sigmoid(Node *preact, char *name)
 {
     Node *activate = node_placeholder(preact->data.dim, preact->data.num_dims, name);
 
@@ -362,7 +366,7 @@ Node *node_nn_sigmoid(Node *preact, char *name)
         }
     }
 
-    activate->expr.type = DL_NN_SIGMOID;
+    activate->expr.type = DL_ACT_SIGMOID;
     activate->expr.args[0] = preact;
 
     preact->ref = activate;
@@ -372,7 +376,7 @@ Node *node_nn_sigmoid(Node *preact, char *name)
 }
 
 //FIXME: it will softmax all element
-Node *node_nn_softmax(Node *preact, char *name)
+Node *node_act_softmax(Node *preact, char *name)
 {
     Node *activate = node_placeholder(preact->data.dim, preact->data.num_dims, name);
 
@@ -387,7 +391,7 @@ Node *node_nn_softmax(Node *preact, char *name)
         }
     }
 
-    activate->expr.type = DL_NN_SOFTMAX;
+    activate->expr.type = DL_ACT_SOFTMAX;
     activate->expr.args[0] = preact;
 
     preact->ref = activate;

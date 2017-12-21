@@ -22,9 +22,9 @@ enum node_func_type {
     DL_MATRIX_SUB,
     DL_MATRIX_MUL,
 
-    DL_NN_RELU,
-    DL_NN_SIGMOID,
-    DL_NN_SOFTMAX,
+    DL_ACT_RELU,
+    DL_ACT_SIGMOID,
+    DL_ACT_SOFTMAX,
 
     DL_COST_MSE,
 };
@@ -67,9 +67,9 @@ Node *node_matrix_add(Node *n1, Node *n2, char *name);
 Node *node_matrix_sub(Node *n1, Node *n2, char *name);
 Node *node_matrix_mul(Node *n1, Node *n2, char *name);
 
-Node *node_nn_relu(Node *preact, char *name);
-Node *node_nn_sigmoid(Node *preact, char *name);
-Node *node_nn_softmax(Node *preact, char *name);
+Node *node_act_relu(Node *preact, char *name);
+Node *node_act_sigmoid(Node *preact, char *name);
+Node *node_act_softmax(Node *preact, char *name);
 
 Node *node_cost_mse(Node *logits, Node *target, char *name);
 

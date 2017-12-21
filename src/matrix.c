@@ -133,7 +133,7 @@ void matrix_mul(Matrix *res, Matrix *m1, Matrix *m2, int diff)
     }
 }
 
-void matrix_nn_relu(Matrix *res, Matrix *preact, Matrix *hold, int diff)
+void matrix_act_relu(Matrix *res, Matrix *preact, Matrix *hold, int diff)
 {
     assert(res->num_dims == preact->num_dims && res->len == preact->len);
 
@@ -142,7 +142,7 @@ void matrix_nn_relu(Matrix *res, Matrix *preact, Matrix *hold, int diff)
     }
 }
 
-void matrix_nn_sigmoid(Matrix *res, Matrix *preact, Matrix *hold, int diff)
+void matrix_act_sigmoid(Matrix *res, Matrix *preact, Matrix *hold, int diff)
 {
     assert(res->num_dims == preact->num_dims && res->len == preact->len);
 
@@ -151,7 +151,7 @@ void matrix_nn_sigmoid(Matrix *res, Matrix *preact, Matrix *hold, int diff)
     }
 }
 
-void matrix_nn_softmax(Matrix *res, Matrix *preact, Matrix *hold, int diff)
+void matrix_act_softmax(Matrix *res, Matrix *preact, Matrix *hold, int diff)
 {
     assert(res->num_dims == preact->num_dims && res->len == preact->len);
 

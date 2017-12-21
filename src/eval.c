@@ -20,9 +20,9 @@ const struct __DL_EVAL_FUNC_HOOK eval_funcs[12] = {
     { DL_MATRIX_ADD, matrix_add },
     { DL_MATRIX_SUB, matrix_sub },
     { DL_MATRIX_MUL, matrix_mul },
-    { DL_NN_RELU, matrix_nn_relu },
-    { DL_NN_SIGMOID, matrix_nn_sigmoid },
-    { DL_NN_SOFTMAX, matrix_nn_softmax },
+    { DL_ACT_RELU, matrix_act_relu },
+    { DL_ACT_SIGMOID, matrix_act_sigmoid },
+    { DL_ACT_SOFTMAX, matrix_act_softmax },
     { DL_COST_MSE, matrix_cost_mse },
 };
 

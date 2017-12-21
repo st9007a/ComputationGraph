@@ -33,30 +33,23 @@ int main ()
     Node *b2 = node_variable(b2_dim, 2, "b2");
 
     Node *preact1 = node_matrix_add(node_matrix_mul(x, w1, ""), b1, "");
-    Node *hidden = node_nn_relu(preact1, "hidden");
+    Node *hidden = node_act_relu(preact1, "hidden");
 
     Node *preact2 = node_matrix_add(node_matrix_mul(hidden, w2, ""), b2, "");
-    Node *out = node_nn_softmax(preact2, "out");
-
-    printf("Before optimize: ");
-    Matrix *res = node_eval(out, feed, 2);
-    for (int i = 0; i < res->len; i++) {
-        printf("%f ", res->val[i]);
-    }
-    printf("\n");
-
+    Node *out = node_act_softmax(preact2, "out");
     Node *loss = node_cost_mse(out, y, "mse");
+
+    printf("Before optimize:\n");
+    node_eval(out, feed, 2);
+    node_info(out, 0);
 
     for (int i = 0; i < 10000; i++) {
         node_optimize(loss, 0.005, feed, 2);
     }
 
-    printf("After optimize: ");
-    res = node_eval(out, feed, 2);
-    for (int i = 0; i < res->len; i++) {
-        printf("%f ", res->val[i]);
-    }
-    printf("\n");
+    printf("After optimize:\n");
+    node_eval(out, feed, 2);
+    node_info(out, 0);
 
     printf("True ans: ");
     for (int i = 0; i < 3; i++) {
