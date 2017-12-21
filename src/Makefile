@@ -13,8 +13,8 @@ OBJS = \
 
 deps = $(OBJS:%.o=.%.o.d)
 
-OUT = ../$(LIB_PATH)
-TARGET = $(OUT)/$(LIB_NAME)
+OUT = $(LIB_PATH)
+TARGET = ../$(OUT)/$(LIB_NAME)
 
 CFLAGS = -std=gnu99 -Wall -fPIC -lm
 SOFLAGS = -shared -Wl,-soname,$(TARGET).$(SOVERSION)
@@ -26,9 +26,13 @@ all: $(TARGET)
 
 $(TARGET): $(OBJS)
 	mkdir -p $(OUT)
-	$(CC) $(SOFLAGS) -o $(TARGET).$(REALVERSION) $^
-	ln -s -f $(TARGET).$(REALVERSION) $(TARGET).$(SOVERSION)
-	ln -s -f $(TARGET).$(REALVERSION) $(TARGET)
+	$(CC) $(SOFLAGS) -o $(LIB_NAME).$(REALVERSION) $^
+	ln -s -f $(LIB_NAME).$(REALVERSION) $(LIB_NAME).$(SOVERSION)
+	ln -s -f $(LIB_NAME).$(REALVERSION) $(LIB_NAME)
+	mv $(LIB_NAME).$(REALVERSION) $(OUT)
+	mv $(LIB_NAME).$(SOVERSION) $(OUT)
+	mv $(LIB_NAME) $(OUT)
+	mv $(OUT) ..
 
 clean:
-	$(RM) $(OBJS) $(deps) $(OUT)
+	$(RM) $(OBJS) $(deps) ../$(OUT)
