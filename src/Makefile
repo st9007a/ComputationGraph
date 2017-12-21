@@ -8,7 +8,8 @@ OBJS = \
       node.o \
 	  eval.o \
 	  optimize.o \
-	  matrix.o
+	  matrix.o \
+	  api.o
 
 deps = $(OBJS:%.o=.%.o.d)
 

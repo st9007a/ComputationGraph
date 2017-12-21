@@ -2,55 +2,8 @@
 #define GRAPH_H
 
 #include <stdint.h>
+#include "dl.h"
 #include "matrix.h"
-
-enum node_type {
-    DL_CONST,
-    DL_VAR,
-    DL_PLACEHOLDER
-};
-
-enum node_func_type {
-    DL_FUNC_NONE,
-
-    DL_SCALAR_ADD,
-    DL_SCALAR_SUB,
-    DL_SCALAR_MUL,
-    DL_SCALAR_DIV,
-
-    DL_MATRIX_ADD,
-    DL_MATRIX_SUB,
-    DL_MATRIX_MUL,
-
-    DL_ACT_RELU,
-    DL_ACT_SIGMOID,
-    DL_ACT_SOFTMAX,
-
-    DL_COST_MSE,
-};
-
-typedef struct __DL_NODE Node;
-typedef struct __DL_FEED_DICT FeedDict;
-
-#define DL_NODE_NAME_LEN 128
-
-struct __DL_NODE {
-    enum node_type type;
-    char name[DL_NODE_NAME_LEN];
-    Matrix data;
-    Matrix grad;
-    struct {
-        enum node_func_type type;
-        Node *args[2];
-    } expr;
-    Node *ref;
-};
-
-struct __DL_FEED_DICT {
-    size_t len;
-    char key[DL_NODE_NAME_LEN];
-    float *val;
-};
 
 void node_info(Node *n, int ignore_val);
 
