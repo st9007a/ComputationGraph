@@ -8,7 +8,7 @@ const struct __DL_API_GATEWAY dl = {
     .debug = {
         .info = node_info,
     },
-    .tensor = {
+    .node = {
         .variable = node_variable,
         .constant = node_constant,
         .placeholder = node_placeholder,

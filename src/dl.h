@@ -70,7 +70,7 @@ extern const struct __DL_API_GATEWAY {
         Node *(*variable)(uint32_t *dim, uint32_t num_dims, char *name);
         Node *(*placeholder)(uint32_t *dim, uint32_t num_dims, char *name);
         Node *(*constant)(float *data, uint32_t *dim, uint32_t num_dims, char *name);
-    } tensor;
+    } node;
     struct {
         Node *(*add)(Node *n1, Node *n2, char *name);
         Node *(*sub)(Node *n1, Node *n2, char *name);
