@@ -20,6 +20,13 @@ And let it has a user-friendly api.
 - Improve the precision of the partial differential
 - Improve the speed of matrix calculation
 
+## Demo
+
+A simple neural network demo
+
+1. `make`
+2. `make demo`
+
 ## Quick start
 
 1. Type command `make` to build shared library

@@ -5,11 +5,11 @@ SOVERSION ?= 1
 REALVERSION ?= 1.0.0
 
 OBJS = \
-      node.o \
-	  eval.o \
-	  optimize.o \
-	  matrix.o \
-	  api.o
+	   node.o \
+	   eval.o \
+	   optimize.o \
+	   matrix.o \
+	   api.o
 
 deps = $(OBJS:%.o=.%.o.d)
 
