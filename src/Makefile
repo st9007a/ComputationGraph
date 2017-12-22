@@ -29,9 +29,7 @@ $(TARGET): $(OBJS)
 	$(CC) $(SOFLAGS) -o $(LIB_NAME).$(REALVERSION) $^
 	ln -s -f $(LIB_NAME).$(REALVERSION) $(LIB_NAME).$(SOVERSION)
 	ln -s -f $(LIB_NAME).$(REALVERSION) $(LIB_NAME)
-	mv $(LIB_NAME).$(REALVERSION) $(OUT)
-	mv $(LIB_NAME).$(SOVERSION) $(OUT)
-	mv $(LIB_NAME) $(OUT)
+	mv $(LIB_NAME)* $(OUT)
 	mv $(OUT) ..
 
 clean:
