@@ -1,6 +1,7 @@
 include ../global.mk
 RM = rm -rf
 
+RELEASE ?= 0
 SOVERSION ?= 1
 REALVERSION ?= 1.0.0
 
@@ -13,10 +14,14 @@ OBJS = \
 
 deps = $(OBJS:%.o=.%.o.d)
 
-OUT = $(LIB_PATH)
-TARGET = ../$(OUT)/$(LIB_NAME)
+OUT = ../$(LIB_PATH)
+TARGET = $(OUT)/$(LIB_NAME)
 
-CFLAGS = -std=gnu99 -Wall -fPIC -lm
+CFLAGS := -std=gnu99 -Wall -fPIC -lm
+ifeq ($(RELEASE),1)
+	CFLAGS += -DNDEBUG
+endif
+
 SOFLAGS = -shared -Wl,-soname,$(TARGET).$(SOVERSION)
 
 all: $(TARGET)
@@ -30,7 +35,6 @@ $(TARGET): $(OBJS)
 	ln -s -f $(LIB_NAME).$(REALVERSION) $(LIB_NAME).$(SOVERSION)
 	ln -s -f $(LIB_NAME).$(REALVERSION) $(LIB_NAME)
 	mv $(LIB_NAME)* $(OUT)
-	mv $(OUT) ..
 
 clean:
-	$(RM) $(OBJS) $(deps) ../$(OUT)
+	$(RM) $(OBJS) $(deps) $(OUT)
