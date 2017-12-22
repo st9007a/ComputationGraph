@@ -24,6 +24,9 @@ const struct __DL_API_GATEWAY dl = {
         .sub = node_matrix_sub,
         .mul = node_matrix_mul,
     },
+    .shape = {
+        .reshape = node_shape_reshape,
+    },
     .activate = {
         .relu = node_act_relu,
         .sigmoid = node_act_sigmoid,

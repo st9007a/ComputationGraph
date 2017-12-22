@@ -22,6 +22,8 @@ enum node_func_type {
     DL_MATRIX_SUB,
     DL_MATRIX_MUL,
 
+    DL_SHAPE_RESHAPE,
+
     DL_ACT_RELU,
     DL_ACT_SIGMOID,
     DL_ACT_SOFTMAX,
@@ -82,6 +84,9 @@ extern const struct __DL_API_GATEWAY {
         Node *(*sub)(Node *n1, Node *n2, char *name);
         Node *(*mul)(Node *n1, Node *n2, char *name);
     } matrix;
+    struct {
+        Node *(*reshape)(Node *n, uint32_t *dim, uint32_t num_dims, char *name);
+    } shape;
     struct {
         Node *(*relu)(Node *preact, char *name);
         Node *(*sigmoid)(Node *preact, char *name);

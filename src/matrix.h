@@ -21,6 +21,8 @@ void matrix_add(Matrix *res, Matrix *m1, Matrix *m2, int diff);
 void matrix_sub(Matrix *res, Matrix *m1, Matrix *m2, int diff);
 void matrix_mul(Matrix *res, Matrix *m1, Matrix *m2, int diff);
 
+void matrix_shape_reshape(Matrix *res, Matrix *m, Matrix *hold, int diff);
+
 void matrix_act_relu(Matrix *res, Matrix *preact, Matrix *hold, int diff);
 void matrix_act_sigmoid(Matrix *res, Matrix *preact, Matrix *hold, int diff);
 void matrix_act_softmax(Matrix *res, Matrix *preact, Matrix *hold, int diff);
