@@ -150,7 +150,6 @@ Node *node_scalar_add(Node *n1, Node *n2, char *name)
     n->expr.type = DL_SCALAR_ADD;
     n->expr.args[0] = n1;
     n->expr.args[1] = n2;
-    n->ref = NULL;
 
     n1->ref = n;
     n2->ref = n;
@@ -176,7 +175,6 @@ Node *node_scalar_sub(Node *n1, Node *n2, char *name)
     n->expr.type = DL_SCALAR_SUB;
     n->expr.args[0] = n1;
     n->expr.args[1] = n2;
-    n->ref = NULL;
 
     n1->ref = n;
     n2->ref = n;
@@ -202,7 +200,6 @@ Node *node_scalar_mul(Node *n1, Node *n2, char *name)
     n->expr.type = DL_SCALAR_MUL;
     n->expr.args[0] = n1;
     n->expr.args[1] = n2;
-    n->ref = NULL;
 
     n1->ref = n;
     n2->ref = n;
@@ -228,7 +225,6 @@ Node *node_scalar_div(Node *n1, Node *n2, char *name)
     n->expr.type = DL_SCALAR_DIV;
     n->expr.args[0] = n1;
     n->expr.args[1] = n2;
-    n->ref = NULL;
 
     n1->ref = n;
     n2->ref = n;
@@ -256,7 +252,6 @@ Node *node_matrix_add(Node *n1, Node *n2, char *name)
     n->expr.type = DL_MATRIX_ADD;
     n->expr.args[0] = n1;
     n->expr.args[1] = n2;
-    n->ref = NULL;
 
     n1->ref = n;
     n2->ref = n;
@@ -282,7 +277,6 @@ Node *node_matrix_sub(Node *n1, Node *n2, char *name)
     n->expr.type = DL_MATRIX_SUB;
     n->expr.args[0] = n1;
     n->expr.args[1] = n2;
-    n->ref = NULL;
 
     n1->ref = n;
     n2->ref = n;
@@ -329,12 +323,37 @@ Node *node_matrix_mul(Node *n1, Node *n2, char *name)
     n->expr.type = DL_MATRIX_MUL;
     n->expr.args[0] = n1;
     n->expr.args[1] = n2;
-    n->ref = NULL;
 
     n1->ref = n;
     n2->ref = n;
 
     return n;
+}
+
+Node *node_shape_reshape(Node *n, uint32_t *dim, uint32_t num_dims, char *name)
+{
+    uint32_t len = 1;
+    for (int i = 0; i < num_dims; i++) {
+        len *= dim[i];
+    }
+
+    if (len != n->data.len) {
+        FATAL(UNEXPECTED_SHAPE_ERROR": new and old shape are unmatched\n");
+    }
+
+    Node *reshape_n = node_placeholder(dim, num_dims, name);
+    if (n == DL_CONST) {
+        reshape_n->type = DL_CONST;
+        for (int i = 0; i < n->data.len; i++) {
+            reshape_n->data.val[i] = n->data.val[i];
+        }
+    }
+
+    reshape_n->expr.type = DL_SHAPE_RESHAPE;
+    reshape_n->expr.args[0] = n;
+
+    n->ref = reshape_n;
+    return reshape_n;
 }
 
 Node *node_act_relu(Node *preact, char *name)
@@ -352,7 +371,6 @@ Node *node_act_relu(Node *preact, char *name)
     activate->expr.args[0] = preact;
 
     preact->ref = activate;
-    activate->ref = NULL;
 
     return activate;
 }
@@ -372,7 +390,6 @@ Node *node_act_sigmoid(Node *preact, char *name)
     activate->expr.args[0] = preact;
 
     preact->ref = activate;
-    activate->ref = NULL;
 
     return activate;
 }
@@ -397,7 +414,6 @@ Node *node_act_softmax(Node *preact, char *name)
     activate->expr.args[0] = preact;
 
     preact->ref = activate;
-    activate->ref = NULL;
 
     return activate;
 }
@@ -412,7 +428,6 @@ Node *node_cost_mse(Node *logits, Node *labels, char *name)
     cost->expr.type = DL_COST_MSE;
     cost->expr.args[0] = logits;
     cost->expr.args[1] = labels;
-    cost->ref = NULL;
 
     logits->ref = cost;
     labels->ref = cost;
