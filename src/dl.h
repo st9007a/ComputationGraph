@@ -37,25 +37,6 @@ typedef struct __DL_FEED_DICT FeedDict;
 
 #define DL_NODE_NAME_LEN 128
 
-struct __DL_MATRIX {
-    float *val;
-    uint32_t dim[4];
-    uint32_t num_dims;
-    uint32_t len;
-};
-
-struct __DL_NODE {
-    enum node_type type;
-    char name[DL_NODE_NAME_LEN];
-    Matrix data;
-    Matrix grad;
-    struct {
-        enum node_func_type type;
-        Node *args[2];
-    } expr;
-    Node *ref;
-};
-
 struct __DL_FEED_DICT {
     size_t len;
     char key[DL_NODE_NAME_LEN];

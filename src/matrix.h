@@ -5,6 +5,13 @@
 #include <stdint.h>
 #include "dl.h"
 
+struct __DL_MATRIX {
+    float *val;
+    uint32_t dim[4];
+    uint32_t num_dims;
+    uint32_t len;
+};
+
 void matrix_create(Matrix *m, uint32_t *dim, uint32_t num_dims);
 
 void matrix_init_random_norm(Matrix *m);

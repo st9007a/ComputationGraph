@@ -5,6 +5,18 @@
 #include "dl.h"
 #include "matrix.h"
 
+struct __DL_NODE {
+    enum node_type type;
+    char name[DL_NODE_NAME_LEN];
+    Matrix data;
+    Matrix grad;
+    struct {
+        enum node_func_type type;
+        Node *args[2];
+    } expr;
+    Node *ref;
+};
+
 void node_info(Node *n, int ignore_val);
 
 Node *node_variable(uint32_t *dim, uint32_t num_dims, char *name);
