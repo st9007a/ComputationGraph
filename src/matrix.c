@@ -146,6 +146,15 @@ void matrix_shape_reshape(Matrix *res, Matrix *m, Matrix *hold, int diff)
     }
 }
 
+void matrix_shape_transpose(Matrix *res, Matrix *m, Matrix *hold, int diff)
+{
+    assert(res->len == m->len);
+
+    for (int i = 0; i < res->len; i++) {
+        assign(res->val[i], m->val[i], diff);
+    }
+}
+
 void matrix_act_relu(Matrix *res, Matrix *preact, Matrix *hold, int diff)
 {
     assert(res->num_dims == preact->num_dims && res->len == preact->len);

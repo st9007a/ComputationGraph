@@ -356,6 +356,33 @@ Node *node_shape_reshape(Node *n, uint32_t *dim, uint32_t num_dims, char *name)
     return reshape_n;
 }
 
+Node *node_shape_transpose(Node *n, uint32_t *perm, uint32_t num_dims, char *name)
+{
+    uint32_t dim[4];
+    for (int i = 0; i < num_dims; i++) {
+        dim[i] = n->data.dim[perm[i]];
+    }
+
+    Node *trans_n = node_placeholder(dim, num_dims, name);
+    for (int i = 0; i < num_dims; i++) {
+        trans_n->data.stride[i] = n->data.stride[perm[i]];
+        trans_n->grad.stride[i] = n->grad.stride[perm[i]];
+    }
+
+    if (n->type == DL_CONST) {
+        trans_n->type = DL_CONST;
+        for (int i = 0; i < trans_n->data.len; i++) {
+            trans_n->data.val[i] = n->data.val[i];
+        }
+    }
+
+    trans_n->expr.type = DL_SHAPE_TRANSPOSE;
+    trans_n->expr.args[0] = n;
+    n->ref = trans_n;
+
+    return trans_n;
+}
+
 Node *node_act_relu(Node *preact, char *name)
 {
     Node *activate = node_placeholder(preact->data.dim, preact->data.num_dims, name);

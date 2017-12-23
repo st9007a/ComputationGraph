@@ -23,6 +23,7 @@ enum node_func_type {
     DL_MATRIX_MUL,
 
     DL_SHAPE_RESHAPE,
+    DL_SHAPE_TRANSPOSE,
 
     DL_ACT_RELU,
     DL_ACT_SIGMOID,
