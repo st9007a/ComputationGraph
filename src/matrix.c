@@ -15,7 +15,7 @@
 void matrix_create(Matrix *m, uint32_t *dim, uint32_t num_dims)
 {
     uint32_t len = 1;
-    for (int i = 0; i < num_dims; i++) {
+    for (int i = num_dims - 1; i >= 0; i--) {
         m->dim[i] = dim[i];
         m->stride[i] = len;
         len *= dim[i];
@@ -129,9 +129,9 @@ void matrix_mul(Matrix *res, Matrix *m1, Matrix *m2, int diff)
             for (int b = 0; b < res->dim[res->num_dims - 1]; b++) {
                 float sum = 0;
                 for (int c = 0; c < m1->dim[m1->num_dims - 1]; c++) {
-                    sum += m1->val[i + a * m1->dim[m1->num_dims - 1] + c] * m2->val[i + c * m2->dim[m2->num_dims - 1] + b];
+                    sum += m1->val[i + a * m1->stride[m1->num_dims - 2] + c] * m2->val[i + c * m2->stride[m2->num_dims - 2] + b];
                 }
-                assign(res->val[i + a * res->dim[res->num_dims - 1] + b], sum, diff)
+                assign(res->val[i + a * res->stride[res->num_dims - 2] + b], sum, diff)
             }
         }
     }
