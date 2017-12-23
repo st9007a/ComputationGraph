@@ -17,6 +17,7 @@ void matrix_create(Matrix *m, uint32_t *dim, uint32_t num_dims)
     uint32_t len = 1;
     for (int i = 0; i < num_dims; i++) {
         m->dim[i] = dim[i];
+        m->stride[i] = len;
         len *= dim[i];
     }
     m->num_dims = num_dims;
@@ -109,8 +110,10 @@ void matrix_sub(Matrix *res, Matrix *m1, Matrix *m2, int diff)
     assert(m1->num_dims == m2->num_dims && m2->num_dims == res->num_dims);
     assert(m1->len == m2->len && m2->len == res->len);
 
-    for (int i = 0; i < res->len; i++) {
-        assign(res->val[i], m1->val[i] - m2->val[i], diff);
+    for (int i = 0; i < res->len; i += m2->len) {
+        for (int j = 0; j < m2->len; j++) {
+            assign(res->val[i + j], m1->val[i + j] - m2->val[j], diff);
+        }
     }
 }
 

@@ -8,6 +8,7 @@
 struct __DL_MATRIX {
     float *val;
     uint32_t dim[4];
+    uint32_t stride[4];
     uint32_t num_dims;
     uint32_t len;
 };
