@@ -140,13 +140,6 @@ Node *node_scalar_add(Node *n1, Node *n2, char *name)
 
     Node *n = node_placeholder(n1->data.dim, n1->data.num_dims, name);
 
-    if (n1->type == DL_CONST && n2->type == DL_CONST) {
-        n->type = DL_CONST;
-        for (int i = 0; i < n1->data.len; i++) {
-            n->data.val[i] = n1->data.val[i] + n2->data.val[0];
-        }
-    }
-
     n->expr.type = DL_SCALAR_ADD;
     n->expr.args[0] = n1;
     n->expr.args[1] = n2;
@@ -164,13 +157,6 @@ Node *node_scalar_sub(Node *n1, Node *n2, char *name)
     }
 
     Node *n = node_placeholder(n1->data.dim, n1->data.num_dims, name);
-
-    if (n1->type == DL_CONST && n2->type == DL_CONST) {
-        n->type = DL_CONST;
-        for (int i = 0; i < n1->data.len; i++) {
-            n->data.val[i] = n1->data.val[i] - n2->data.val[0];
-        }
-    }
 
     n->expr.type = DL_SCALAR_SUB;
     n->expr.args[0] = n1;
@@ -190,13 +176,6 @@ Node *node_scalar_mul(Node *n1, Node *n2, char *name)
 
     Node *n = node_placeholder(n1->data.dim, n1->data.num_dims, name);
 
-    if (n1->type == DL_CONST && n2->type == DL_CONST) {
-        n->type = DL_CONST;
-        for (int i = 0; i < n1->data.len; i++) {
-            n->data.val[i] = n1->data.val[i] * n2->data.val[0];
-        }
-    }
-
     n->expr.type = DL_SCALAR_MUL;
     n->expr.args[0] = n1;
     n->expr.args[1] = n2;
@@ -214,13 +193,6 @@ Node *node_scalar_div(Node *n1, Node *n2, char *name)
     }
 
     Node *n = node_placeholder(n1->data.dim, n1->data.num_dims, name);
-
-    if (n1->type == DL_CONST && n2->type == DL_CONST) {
-        n->type = DL_CONST;
-        for (int i = 0; i < n1->data.len; i++) {
-            n->data.val[i] = n1->data.val[i] / n2->data.val[0];
-        }
-    }
 
     n->expr.type = DL_SCALAR_DIV;
     n->expr.args[0] = n1;
@@ -240,15 +212,6 @@ Node *node_matrix_add(Node *n1, Node *n2, char *name)
 
     Node *n = node_placeholder(n1->data.dim, n1->data.num_dims, name);
 
-    if (n1->type == DL_CONST && n2->type == DL_CONST) {
-        n->type = DL_CONST;
-        for (int i = 0; i < n1->data.len; i += n2->data.len) {
-            for (int j = 0; j < n2->data.len; j++) {
-                n->data.val[i + j] = n1->data.val[i + j] + n2->data.val[j];
-            }
-        }
-    }
-
     n->expr.type = DL_MATRIX_ADD;
     n->expr.args[0] = n1;
     n->expr.args[1] = n2;
@@ -266,13 +229,6 @@ Node *node_matrix_sub(Node *n1, Node *n2, char *name)
     }
 
     Node *n = node_placeholder(n1->data.dim, n1->data.num_dims, name);
-
-    if (n1->type == DL_CONST && n2->type == DL_CONST) {
-        n->type = DL_CONST;
-        for (int i = 0; i < n1->data.len; i++) {
-            n->data.val[i] = n1->data.val[i] - n2->data.val[i];
-        }
-    }
 
     n->expr.type = DL_MATRIX_SUB;
     n->expr.args[0] = n1;
@@ -300,26 +256,6 @@ Node *node_matrix_mul(Node *n1, Node *n2, char *name)
     Node *n = node_placeholder(n1->data.dim, n1->data.num_dims, name);
     n1->data.dim[n1->data.num_dims - 1] = n2->data.dim[n2->data.num_dims - 2];
 
-    if (n1->type == DL_CONST && n2->type == DL_CONST) {
-        n->type = DL_CONST;
-
-        matrix_init_zeros(&n->data);
-
-        int block = n->data.dim[n->data.num_dims - 2] * n->data.dim[n->data.num_dims - 1];
-
-        for (int i = 0; i < n->data.len; i += block) {
-            for (int a = 0; a < n->data.dim[n->data.num_dims - 2]; a++) {
-                for (int b = 0; b < n->data.dim[n->data.num_dims - 1]; b++) {
-                    float sum = 0;
-                    for (int c = 0; c < n1->data.dim[n1->data.num_dims - 1]; c++) {
-                        sum += n1->data.val[i + a * n1->data.dim[n1->data.num_dims - 1] + c] * n2->data.val[i + c * n2->data.dim[n2->data.num_dims - 1] + b];
-                    }
-                    n->data.val[i + a * n->data.dim[n->data.num_dims - 1] + b] = sum;
-                }
-            }
-        }
-    }
-
     n->expr.type = DL_MATRIX_MUL;
     n->expr.args[0] = n1;
     n->expr.args[1] = n2;
@@ -342,12 +278,6 @@ Node *node_shape_reshape(Node *n, uint32_t *dim, uint32_t num_dims, char *name)
     }
 
     Node *reshape_n = node_placeholder(dim, num_dims, name);
-    if (n == DL_CONST) {
-        reshape_n->type = DL_CONST;
-        for (int i = 0; i < n->data.len; i++) {
-            reshape_n->data.val[i] = n->data.val[i];
-        }
-    }
 
     reshape_n->expr.type = DL_SHAPE_RESHAPE;
     reshape_n->expr.args[0] = n;
@@ -369,13 +299,6 @@ Node *node_shape_transpose(Node *n, uint32_t *perm, uint32_t num_dims, char *nam
         trans_n->grad.stride[i] = n->grad.stride[perm[i]];
     }
 
-    if (n->type == DL_CONST) {
-        trans_n->type = DL_CONST;
-        for (int i = 0; i < trans_n->data.len; i++) {
-            trans_n->data.val[i] = n->data.val[i];
-        }
-    }
-
     trans_n->expr.type = DL_SHAPE_TRANSPOSE;
     trans_n->expr.args[0] = n;
     n->ref = trans_n;
@@ -386,13 +309,6 @@ Node *node_shape_transpose(Node *n, uint32_t *perm, uint32_t num_dims, char *nam
 Node *node_act_relu(Node *preact, char *name)
 {
     Node *activate = node_placeholder(preact->data.dim, preact->data.num_dims, name);
-
-    if (preact->type == DL_CONST) {
-        activate->type = DL_CONST;
-        for (int i = 0; i < activate->data.len; i++) {
-            activate->data.val[i] = preact->data.val[i] >= 0 ? preact->data.val[i] : 0;
-        }
-    }
 
     activate->expr.type = DL_ACT_RELU;
     activate->expr.args[0] = preact;
@@ -406,13 +322,6 @@ Node *node_act_sigmoid(Node *preact, char *name)
 {
     Node *activate = node_placeholder(preact->data.dim, preact->data.num_dims, name);
 
-    if (preact->type == DL_CONST) {
-        activate->type = DL_CONST;
-        for (int i = 0; i < activate->data.len; i++) {
-            activate->data.val[i] = 1 / (1 + exp(0 - preact->data.val[i]));
-        }
-    }
-
     activate->expr.type = DL_ACT_SIGMOID;
     activate->expr.args[0] = preact;
 
@@ -425,17 +334,6 @@ Node *node_act_sigmoid(Node *preact, char *name)
 Node *node_act_softmax(Node *preact, char *name)
 {
     Node *activate = node_placeholder(preact->data.dim, preact->data.num_dims, name);
-
-    if (preact->type == DL_CONST) {
-        activate->type = DL_CONST;
-        float sum = 0;
-        for (int i = 0; i < preact->data.len; i++) {
-            sum += exp(preact->data.val[i]);
-        }
-        for (int i = 0; i < activate->data.len; i++) {
-            activate->data.val[i] = exp(preact->data.val[i]) / sum;
-        }
-    }
 
     activate->expr.type = DL_ACT_SOFTMAX;
     activate->expr.args[0] = preact;

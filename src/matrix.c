@@ -12,13 +12,23 @@
 #define assign(dst, val, diff) \
     dst = dst * diff - ((diff << 1) - 1) * (val);
 
+static inline float *matrix_access(Matrix *m, uint32_t w, uint32_t x, uint32_t y, uint32_t z)
+{
+    assert(w < m->dim[0] && x < m->dim[1] && y < m->dim[2] && z < m->dim[3]);
+    return m->val + w * m->stride[0] + x * m->stride[1] + y * m->stride[2] + z * m->stride[3];
+}
+
 void matrix_create(Matrix *m, uint32_t *dim, uint32_t num_dims)
 {
     uint32_t len = 1;
-    for (int i = num_dims - 1; i >= 0; i--) {
-        m->dim[i] = dim[i];
+    for (int i = 0; i < 4; i++) {
+        m->dim[i] = 1;
+        m->stride[i] = 0;
+    }
+    for (int i = 3; i >= 4 - num_dims; i--) {
+        m->dim[i] = dim[i - 4 + num_dims];
         m->stride[i] = len;
-        len *= dim[i];
+        len *= m->dim[i];
     }
     m->num_dims = num_dims;
     m->len = len;
@@ -96,23 +106,47 @@ void matrix_scalar_div(Matrix *res, Matrix *m1, Matrix *m2, int diff)
 
 void matrix_add(Matrix *res, Matrix *m1, Matrix *m2, int diff)
 {
-    assert(!memcmp(m2->dim, m1->dim + m1->num_dims - m2->num_dims, m2->num_dims));
+    assert(!memcmp(m2->dim, m1->dim, m2->num_dims));
+    assert(!memcmp(res->dim, m1->dim, res->num_dims));
 
-    for (int i = 0; i < res->len; i += m2->len) {
-        for (int j = 0; j < m2->len; j++) {
-            assign(res->val[i + j], m1->val[i + j] + m2->val[j], diff);
+    /* for (int i = 0; i < res->len; i += m2->len) { */
+    /*     for (int j = 0; j < m2->len; j++) { */
+    /*         assign(res->val[i + j], m1->val[i + j] + m2->val[j], diff); */
+    /*     } */
+    /* } */
+
+
+    for (int i = 0; i < res->dim[0]; i++) {
+        for (int j = 0; j < res->dim[1]; j++) {
+            for (int k = 0; k < res->dim[2]; k++) {
+                for (int l = 0; l < res->dim[3]; l++) {
+                    assign(*matrix_access(res, i, j, k, l), *matrix_access(m1, i, j, k, l) + *matrix_access(m2, i, j, k, l), diff);
+                }
+            }
         }
     }
+
+
 }
 
 void matrix_sub(Matrix *res, Matrix *m1, Matrix *m2, int diff)
 {
-    assert(m1->num_dims == m2->num_dims && m2->num_dims == res->num_dims);
-    assert(m1->len == m2->len && m2->len == res->len);
+    assert(!memcmp(m2->dim, m1->dim, m2->num_dims));
+    assert(!memcmp(res->dim, m1->dim, res->num_dims));
 
-    for (int i = 0; i < res->len; i += m2->len) {
-        for (int j = 0; j < m2->len; j++) {
-            assign(res->val[i + j], m1->val[i + j] - m2->val[j], diff);
+    /* for (int i = 0; i < res->len; i += m2->len) { */
+    /*     for (int j = 0; j < m2->len; j++) { */
+    /*         assign(res->val[i + j], m1->val[i + j] - m2->val[j], diff); */
+    /*     } */
+    /* } */
+
+    for (int i = 0; i < res->dim[0]; i++) {
+        for (int j = 0; j < res->dim[1]; j++) {
+            for (int k = 0; k < res->dim[2]; k++) {
+                for (int l = 0; l < res->dim[3]; l++) {
+                    assign(*matrix_access(res, i, j, k, l), *matrix_access(m1, i, j, k, l) - *matrix_access(m2, i, j, k, l), diff);
+                }
+            }
         }
     }
 }
@@ -123,18 +157,6 @@ void matrix_mul(Matrix *res, Matrix *m1, Matrix *m2, int diff)
     assert(m1->num_dims == m2->num_dims);
     assert(m1->dim[m1->num_dims - 1] == m2->dim[m2->num_dims - 2]);
 
-    int block = res->dim[res->num_dims - 2] * res->dim[res->num_dims - 1];
-    for (int i = 0; i < res->len; i += block) {
-        for (int a = 0; a < res->dim[res->num_dims - 2]; a++) {
-            for (int b = 0; b < res->dim[res->num_dims - 1]; b++) {
-                float sum = 0;
-                for (int c = 0; c < m1->dim[m1->num_dims - 1]; c++) {
-                    sum += m1->val[i + a * m1->stride[m1->num_dims - 2] + c] * m2->val[i + c * m2->stride[m2->num_dims - 2] + b];
-                }
-                assign(res->val[i + a * res->stride[res->num_dims - 2] + b], sum, diff)
-            }
-        }
-    }
 }
 
 void matrix_shape_reshape(Matrix *res, Matrix *m, Matrix *hold, int diff)

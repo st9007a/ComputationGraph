@@ -9,6 +9,7 @@
 
 #define TEST_DATA {2.0, 1.0, 4.0, 3.0}
 #define TEST_DIM {2, 2}
+#define TEST_NODE_DIM {1, 1, 2, 2}
 #define TEST_NUM_DIMS 2
 
 #define TEST_START                   \
@@ -41,11 +42,11 @@ TEST_CASE(node_variable)
         .name = "var",
         .type = DL_VAR,
         .data = {
-            .dim = TEST_DIM,
+            .dim = TEST_NODE_DIM,
             .num_dims = TEST_NUM_DIMS,
         },
         .grad = {
-            .dim = TEST_DIM,
+            .dim = TEST_NODE_DIM,
             .num_dims = TEST_NUM_DIMS,
         },
         .expr = {
@@ -65,11 +66,11 @@ TEST_CASE(node_placeholder)
         .name = "holder",
         .type = DL_PLACEHOLDER,
         .data = {
-            .dim = TEST_DIM,
+            .dim = TEST_NODE_DIM,
             .num_dims = TEST_NUM_DIMS,
         },
         .grad = {
-            .dim = TEST_DIM,
+            .dim = TEST_NODE_DIM,
             .num_dims = TEST_NUM_DIMS,
         },
         .expr = {
@@ -88,11 +89,11 @@ TEST_CASE(node_constant)
         .name = "const",
         .type = DL_CONST,
         .data = {
-            .dim = TEST_DIM,
+            .dim = TEST_NODE_DIM,
             .num_dims = TEST_NUM_DIMS,
         },
         .grad = {
-            .dim = TEST_DIM,
+            .dim = TEST_NODE_DIM,
             .num_dims = TEST_NUM_DIMS,
         },
         .expr = {
@@ -115,11 +116,11 @@ TEST_CASE(node_scalar_add)
         .name = "scalar_add",
         .type = DL_PLACEHOLDER,
         .data = {
-            .dim = TEST_DIM,
+            .dim = TEST_NODE_DIM,
             .num_dims = TEST_NUM_DIMS,
         },
         .grad = {
-            .dim = TEST_DIM,
+            .dim = TEST_NODE_DIM,
             .num_dims = TEST_NUM_DIMS,
         },
         .expr = {
@@ -145,11 +146,11 @@ TEST_CASE(node_scalar_sub)
         .name = "scalar_sub",
         .type = DL_PLACEHOLDER,
         .data = {
-            .dim = TEST_DIM,
+            .dim = TEST_NODE_DIM,
             .num_dims = TEST_NUM_DIMS,
         },
         .grad = {
-            .dim = TEST_DIM,
+            .dim = TEST_NODE_DIM,
             .num_dims = TEST_NUM_DIMS,
         },
         .expr = {
@@ -175,11 +176,11 @@ TEST_CASE(node_scalar_mul)
         .name = "scalar_mul",
         .type = DL_PLACEHOLDER,
         .data = {
-            .dim = TEST_DIM,
+            .dim = TEST_NODE_DIM,
             .num_dims = TEST_NUM_DIMS,
         },
         .grad = {
-            .dim = TEST_DIM,
+            .dim = TEST_NODE_DIM,
             .num_dims = TEST_NUM_DIMS,
         },
         .expr = {
@@ -205,11 +206,11 @@ TEST_CASE(node_scalar_div)
         .name = "scalar_div",
         .type = DL_PLACEHOLDER,
         .data = {
-            .dim = TEST_DIM,
+            .dim = TEST_NODE_DIM,
             .num_dims = TEST_NUM_DIMS,
         },
         .grad = {
-            .dim = TEST_DIM,
+            .dim = TEST_NODE_DIM,
             .num_dims = TEST_NUM_DIMS,
         },
         .expr = {
@@ -235,11 +236,11 @@ TEST_CASE(node_matrix_add)
         .name = "matrix_add",
         .type = DL_PLACEHOLDER,
         .data = {
-            .dim = TEST_DIM,
+            .dim = TEST_NODE_DIM,
             .num_dims = TEST_NUM_DIMS,
         },
         .grad = {
-            .dim = TEST_DIM,
+            .dim = TEST_NODE_DIM,
             .num_dims = TEST_NUM_DIMS,
         },
         .expr = {
@@ -266,11 +267,11 @@ TEST_CASE(node_matrix_sub)
         .name = "matrix_sub",
         .type = DL_PLACEHOLDER,
         .data = {
-            .dim = TEST_DIM,
+            .dim = TEST_NODE_DIM,
             .num_dims = TEST_NUM_DIMS,
         },
         .grad = {
-            .dim = TEST_DIM,
+            .dim = TEST_NODE_DIM,
             .num_dims = TEST_NUM_DIMS,
         },
         .expr = {
@@ -283,39 +284,6 @@ TEST_CASE(node_matrix_sub)
 
     CHECK_NODE("node_matrix_sub()", test_node, expect);
 
-    free(test_node);
-    free(n1);
-    free(n2);
-}
-
-TEST_CASE(node_matrix_mul)
-{
-    int n1_dim[2] = {2, 3};
-    int n2_dim[2] = {3, 2};
-
-    Node *n1 = node_placeholder(n1_dim, 2, "node1");
-    Node *n2 = node_variable(n2_dim, 2, "node2");
-
-    Node *test_node = node_matrix_mul(n1, n2, "matrix_mul");
-
-    Node expect = {
-        .type = DL_PLACEHOLDER,
-        .name = "matrix_mul",
-        .data = {
-            .dim = {2, 2},
-            .num_dims = 2,
-        },
-        .grad = {
-            .dim = {2, 2},
-            .num_dims = 2,
-        },
-        .expr = {
-            .type = DL_MATRIX_MUL,
-            .args = {n1, n2},
-        },
-    };
-
-    CHECK_NODE("node_matrix_mul()", test_node, expect);
     free(test_node);
     free(n1);
     free(n2);
@@ -337,7 +305,6 @@ int main()
 
     RUN_TEST_CASE(node_matrix_add);
     RUN_TEST_CASE(node_matrix_sub);
-    RUN_TEST_CASE(node_matrix_mul);
 
     return 0;
 }
