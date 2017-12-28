@@ -109,13 +109,6 @@ void matrix_add(Matrix *res, Matrix *m1, Matrix *m2, int diff)
     assert(!memcmp(m2->dim, m1->dim, m2->num_dims));
     assert(!memcmp(res->dim, m1->dim, res->num_dims));
 
-    /* for (int i = 0; i < res->len; i += m2->len) { */
-    /*     for (int j = 0; j < m2->len; j++) { */
-    /*         assign(res->val[i + j], m1->val[i + j] + m2->val[j], diff); */
-    /*     } */
-    /* } */
-
-
     for (int i = 0; i < res->dim[0]; i++) {
         for (int j = 0; j < res->dim[1]; j++) {
             for (int k = 0; k < res->dim[2]; k++) {
@@ -133,12 +126,6 @@ void matrix_sub(Matrix *res, Matrix *m1, Matrix *m2, int diff)
 {
     assert(!memcmp(m2->dim, m1->dim, m2->num_dims));
     assert(!memcmp(res->dim, m1->dim, res->num_dims));
-
-    /* for (int i = 0; i < res->len; i += m2->len) { */
-    /*     for (int j = 0; j < m2->len; j++) { */
-    /*         assign(res->val[i + j], m1->val[i + j] - m2->val[j], diff); */
-    /*     } */
-    /* } */
 
     for (int i = 0; i < res->dim[0]; i++) {
         for (int j = 0; j < res->dim[1]; j++) {
