@@ -47,6 +47,8 @@ void node_info(Node *n, int ignore_val)
     }
 
     printf("Dimension: %d-D\n", n->data.num_dims);
+
+    // FIXME: fix print dimension
     printf("Dimension Lenght: ");
     for (int i = 0; i < n->data.num_dims; i++) {
         printf("%u ", n->data.dim[i]);
@@ -266,6 +268,8 @@ Node *node_matrix_mul(Node *n1, Node *n2, char *name)
     return n;
 }
 
+// FIXME: try a high perfomance way
+// calculate stride when node create
 Node *node_shape_reshape(Node *n, uint32_t *dim, uint32_t num_dims, char *name)
 {
     uint32_t len = 1;
@@ -289,6 +293,8 @@ Node *node_shape_reshape(Node *n, uint32_t *dim, uint32_t num_dims, char *name)
 Node *node_shape_transpose(Node *n, uint32_t *perm, uint32_t num_dims, char *name)
 {
     uint32_t dim[4];
+    // FIXME: apply new memory layout
+    // {hold, hold, ... dim, dim, ...}
     for (int i = 0; i < num_dims; i++) {
         dim[i] = n->data.dim[perm[i]];
     }
@@ -330,7 +336,7 @@ Node *node_act_sigmoid(Node *preact, char *name)
     return activate;
 }
 
-//FIXME: it will softmax all element
+//FIXME: apply custom axis
 Node *node_act_softmax(Node *preact, char *name)
 {
     Node *activate = node_placeholder(preact->data.dim, preact->data.num_dims, name);

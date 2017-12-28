@@ -140,12 +140,10 @@ void matrix_sub(Matrix *res, Matrix *m1, Matrix *m2, int diff)
 
 void matrix_mul(Matrix *res, Matrix *m1, Matrix *m2, int diff)
 {
-    assert(m1->num_dims >= 2 && m2->num_dims >= 2);
-    assert(m1->num_dims == m2->num_dims);
-    assert(m1->dim[m1->num_dims - 1] == m2->dim[m2->num_dims - 2]);
-
+    // TODO: implement matrix mul
 }
 
+// FIXME: matrix_access
 void matrix_shape_reshape(Matrix *res, Matrix *m, Matrix *hold, int diff)
 {
     assert(res->len == m->len);
@@ -155,6 +153,7 @@ void matrix_shape_reshape(Matrix *res, Matrix *m, Matrix *hold, int diff)
     }
 }
 
+// FIXME: swap shape and stride
 void matrix_shape_transpose(Matrix *res, Matrix *m, Matrix *hold, int diff)
 {
     assert(res->len == m->len);
@@ -182,6 +181,7 @@ void matrix_act_sigmoid(Matrix *res, Matrix *preact, Matrix *hold, int diff)
     }
 }
 
+// FIXME: matrix_access
 void matrix_act_softmax(Matrix *res, Matrix *preact, Matrix *hold, int diff)
 {
     assert(res->num_dims == preact->num_dims && res->len == preact->len);
@@ -195,6 +195,7 @@ void matrix_act_softmax(Matrix *res, Matrix *preact, Matrix *hold, int diff)
     }
 }
 
+// FIXME: matrix_access
 void matrix_cost_mse(Matrix *res, Matrix *logits, Matrix *labels, int diff)
 {
     assert(logits->len == labels->len && logits->num_dims == labels->num_dims);
