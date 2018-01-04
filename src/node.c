@@ -48,9 +48,8 @@ void node_info(Node *n, int ignore_val)
 
     printf("Dimension: %d-D\n", n->data.num_dims);
 
-    // FIXME: fix print dimension
     printf("Dimension Lenght: ");
-    for (int i = 0; i < n->data.num_dims; i++) {
+    for (int i = 4 - n->data.num_dims; i < 4; i++) {
         printf("%u ", n->data.dim[i]);
     }
     printf("\n");
