@@ -63,3 +63,15 @@ Value: 1.000000 2.000000 3.000000 4.000000 5.000000 6.000000
 Expression Type: None
 ---------------------
 ```
+
+## API
+
+### dl.node.variable(uint32_t \*dim, uint32_t num_dims, char \*name)
+
+Description: Create a node which has trainable variables, variables will be initialized via sampling normal distribution
+
+Args:
+
+- dim: The length of every dimension
+- num_dims: The count of dimensions, maximum is 4
+- name: The name of the node
