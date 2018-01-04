@@ -291,6 +291,10 @@ TEST_CASE(node_matrix_sub)
 
 int main()
 {
+    uint32_t print_test[2] = {2, 2};
+    Node *n = node_variable(print_test, 2, "print_test");
+    node_info(n, 0);
+    free(n);
 
     TEST_START;
 
