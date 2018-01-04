@@ -66,7 +66,7 @@ Expression Type: None
 
 ## API
 
-### dl.node.variable(uint32_t \*dim, uint32_t num_dims, char \*name)
+### Node \*dl.node.variable(uint32_t \*dim, uint32_t num_dims, char \*name)
 
 Description: Create a node which has trainable variables, variables will be initialized via sampling normal distribution
 
@@ -74,4 +74,34 @@ Args:
 
 - dim: The length of every dimension
 - num_dims: The count of dimensions, maximum is 4
+- name: The name of the node 
+
+### Node \*dl.node.constant(float \*val, uint32_t \*dim, uint32_t num_dims, char \*name)
+
+Description: Create a node which has constant, constant will not change during optimization
+
+Args:
+
+- val: The constant value of the node
+- dim: The length of every dimension
+- num_dims: The count of dimensions, maximum is 4
 - name: The name of the node
+
+### Node \*dl.node.placeholder(uint32_t \*dim, uint32_t num_dims, char \*name)
+
+Description: Create a node which doesn't have any value
+
+Args:
+
+- dim: The length of every dimension
+- num_dims: The count of dimensions, maximum is 4
+- name: The name of the node
+
+### void dl.debug.info(Node \*n, int ignore_val)
+
+Description: Show the info of the node
+
+Args:
+
+- n: The node you want to check
+- ignore_val: set 1 not to display all values in the node, otherwise set 0
