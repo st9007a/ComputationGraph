@@ -9,8 +9,8 @@ int main ()
     int x_dim[2] = {1, 2};
     float x_val[2] = {1.0, 2.0};
 
-    int y_dim[2] = {1, 3};
-    float y_val[3] = {0, 1, 0};
+    int y_dim[2] = {1, 5};
+    float y_val[5] = {0, 0, 1, 0, 0};
 
     FeedDict feed[2] = {
         { .key = "x", .val = x_val, .len = 2, },
@@ -23,8 +23,8 @@ int main ()
     int w1_dim[2] = {2, 4};
     int b1_dim[1] = {4};
 
-    int w2_dim[2] = {4, 3};
-    int b2_dim[1] = {3};
+    int w2_dim[2] = {4, 5};
+    int b2_dim[1] = {5};
 
     Node *w1 = dl.node.variable(w1_dim, 2, "w1");
     Node *b1 = dl.node.variable(b1_dim, 1, "b1");
@@ -43,15 +43,15 @@ int main ()
     dl.debug.info(out, 0);
 
     for (int i = 0; i < 10000; i++) {
-        dl.optimize(loss, 0.005, feed, 2);
+        dl.optimize(loss, 0.01, feed, 2);
     }
 
-    printf("After optimize:\n");
+    printf("\n\nAfter optimize:\n");
     dl.eval(out, feed, 2);
     dl.debug.info(out, 0);
 
-    printf("True ans: ");
-    for (int i = 0; i < 3; i++) {
+    printf("\n\nTrue ans: ");
+    for (int i = 0; i < 5; i++) {
         printf("%f ", y_val[i]);
     }
     printf("\n");
